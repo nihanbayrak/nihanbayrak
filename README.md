@@ -3,7 +3,7 @@
 
 - 🌱 I’m currently learning **Python**
 
-- 📝 I regularly write articles on [https://medium.com/@nihanbayrakk](https://medium.com/@nihanbayrakk)
+- 📝 I regularly write articles on [Medium](https://medium.com/@nihanbayrakk)
 
 - 📫 How to reach me **nihanbayrakk@gmail.com**
 
