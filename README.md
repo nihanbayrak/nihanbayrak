@@ -1,5 +1,5 @@
-<h1 align="center">𝔥𝔦 𝔱𝔥𝔢𝔯𝔢, I'm Nihan</h1>
-<h3 align="center">Studying Software Engineering at Bahcesehir University</h3>
+<h1 align="center">𝔥𝔦 𝔱𝔥𝔢𝔯𝔢, ℑ'𝔪 𝔑𝔦𝔥𝔞𝔫</h1>
+<h3 align="center">𝓢𝓽𝓾𝓭𝔂𝓲𝓷𝓰 𝓢𝓸𝓯𝓽𝔀𝓪𝓻𝓮 𝓔𝓷𝓰𝓲𝓷𝓮𝓮𝓻𝓲𝓷𝓰 𝓪𝓽 𝓑𝓪𝓱𝓬𝓮𝓼𝓮𝓱𝓲𝓻 𝓤𝓷𝓲𝓿𝓮𝓻𝓼𝓲𝓽𝔂</h3>
 
 - 🌱 I’m currently learning **Python**
 
