@@ -1,6 +1,6 @@
 <h1 align="center">(っ◔◡◔)っ ♥ Hello there, I'm Nihan Bayrak ♥</h1>
 <h3 align="center">𝒜 𝓅𝒶𝓈𝓈𝒾❤𝓃𝒶𝓉𝑒 𝒮❤𝒻𝓉𝓌𝒶𝓇𝑒 𝐸𝓃𝑔𝒾𝓃𝑒𝑒𝓇𝒾𝓃𝑔 𝓈𝓉𝓊𝒹𝑒𝓃𝓉 𝒶𝓉 𝐵𝒶𝒽𝒸𝑒𝓈𝑒𝒽𝒾𝓇 𝒰𝓃𝒾𝓋𝑒𝓇𝓈𝒾𝓉𝓎 ¸,ø¤º°`°º¤ø,¸</h3>
-![image](https://user-images.githubusercontent.com/32307171/193337725-962bf373-4058-45dd-bb40-2167f64e9b9c.png)
+<img align="right" width="400" src="https://user-images.githubusercontent.com/32307171/193337725-962bf373-4058-45dd-bb40-2167f64e9b9c.png">
 
 
 - 💎 I’m currently learning **Python**
