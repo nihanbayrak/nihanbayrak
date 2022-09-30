@@ -1,6 +1,5 @@
 <h1 align="center">(っ◔◡◔)っ 𝑯𝒆𝒍𝒍𝒐 𝒕𝒉𝒆𝒓𝒆, 𝑰'𝒎 𝑵𝒊𝒉𝒂𝒏 𝑩𝒂𝒚𝒓𝒂𝒌</h1>
 <h3 align="center">  ☆☆ 𝒮𝑜𝒻𝓉𝓌𝒶𝓇𝑒 𝐸𝓃𝑔𝒾𝓃𝑒𝑒𝓇𝒾𝓃𝑔 𝓈𝓉𝓊𝒹𝑒𝓃𝓉 𝒶𝓉 𝐵𝒶𝒽𝒸𝑒𝓈𝑒𝒽𝒾𝓇 𝒰𝓃𝒾𝓋𝑒𝓇𝓈𝒾𝓉𝓎 ☆☆</h3>
-<img align="right" width="400" src="https://tenor.com/view/cat-laptop-fast-homework-apple-gif-5315897"
 
 - 💎 𝑰'𝒎 𝒄𝒖𝒓𝒓𝒆𝒏𝒕𝒍𝒚 𝒍𝒆𝒂𝒓𝒏𝒊𝒏𝒈 **𝑷𝒚𝒕𝒉𝒐𝒏**
 
