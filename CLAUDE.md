@@ -51,3 +51,10 @@ the stack is stated in `profile.toml` rather than counted.
 `data/profile.toml` is authoritative. `tools/export-site-data.py` regenerates
 `data/work.json`, which is copied into the portfolio site's `data/`. Edit the toml,
 run the script, copy the file — never hand-edit `work.json` in either repo.
+
+## Dependencies
+
+`fonttools uharfbuzz brotli skia-pathops`. `skia-pathops` is needed by `tools/sort3d.py`
+for boolean path operations, and `render.py` imports it at module level — so a missing
+`skia-pathops` breaks the whole render, not just the object. Keep the workflow's pip
+line and this list in step.
