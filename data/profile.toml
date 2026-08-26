@@ -9,6 +9,7 @@ cells   = [
   ["Day work",  "WIN Creating Images"],
   ["Languages", "TR · EN · DE · FR"],
 ]
+chiefly = "Python · TypeScript"
 ledger_note = "Most of the work sits in private repositories. What follows is what can be shown."
 
 [[work]]

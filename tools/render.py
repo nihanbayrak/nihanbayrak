@@ -11,6 +11,7 @@ import os
 import tomllib
 import urllib.error
 import urllib.request
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import typeset as T
@@ -60,9 +61,14 @@ def collect():
             repos.extend(batch)
             page += 1
 
+        # Current practice, not archaeology: forks, archived repos and anything
+        # untouched for two years say nothing about what she writes now.
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=730)).isoformat()
         langs = {}
         for r in repos:
-            if r.get("fork") or not r.get("language"):
+            if r.get("fork") or r.get("archived") or not r.get("language"):
+                continue
+            if r.get("pushed_at", "") < cutoff:
                 continue
             langs[r["language"]] = langs.get(r["language"], 0) + 1
 
@@ -235,7 +241,7 @@ def ledger(stats, cfg):
         ("Contributions, this year", str(stats.get("contributions", "\u2014"))),
         ("Followers", str(stats["followers"])),
         ("On GitHub since", stats["since"]),
-        ("Principal language", stats["langs"][0][0] if stats["langs"] else "\u2014"),
+        ("Chiefly", cfg["chiefly"]),
     ]
     cw = (W - 72) / len(figures)
     for i, (label, value) in enumerate(figures):
