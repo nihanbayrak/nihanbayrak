@@ -36,3 +36,12 @@ GITHUB_TOKEN=$(gh auth token) python tools/render.py
 **Verify in a browser before pushing.** These bugs are invisible in the source — the first
 draft had a broken keyhole, colliding table cells and three overflowing text runs, none of
 which were visible by reading the SVG.
+
+## The Action races you
+
+`refresh.yml` runs on any push touching `tools/**` or `data/**` and commits its own
+redraw. Always `git pull --rebase` before rendering locally, or your next push is
+rejected. Its numbers are usually fresher than yours — but note it runs with a
+repo-scoped `GITHUB_TOKEN` that cannot see private repositories, so anything derived
+from private repos will differ between a local run and a CI run. That is exactly why
+the stack is stated in `profile.toml` rather than counted.
