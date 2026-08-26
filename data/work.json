@@ -1,0 +1,105 @@
+{
+  "work": [
+    {
+      "n": "01",
+      "title": "Brief to Concept, Locally",
+      "kind": "Multi-agent pipeline",
+      "status": "Public",
+      "blurb": "A raw client packaging brief becomes a design brief, then a first concept image. Nothing leaves the machine.",
+      "stack": [
+        "DSPy",
+        "LangGraph",
+        "Ollama",
+        "Python"
+      ],
+      "tags": [
+        "agents",
+        "local"
+      ],
+      "url": "https://github.com/nihanbayrak/Ollama_pipeline"
+    },
+    {
+      "n": "02",
+      "title": "Editorial Photo Generator",
+      "kind": "Generative image",
+      "status": "Public",
+      "blurb": "A selfie becomes an editorial shoot. Reference images drive style, wardrobe and pose separately.",
+      "stack": [
+        "Gemini",
+        "JavaScript"
+      ],
+      "tags": [
+        "image",
+        "fashion"
+      ],
+      "url": "https://github.com/nihanbayrak/editorial-photo-app"
+    },
+    {
+      "n": "03",
+      "title": "Conscious",
+      "kind": "iOS application",
+      "status": "In review",
+      "blurb": "A scanner for food and cosmetics that never invents an ingredient. Two hundred and sixty-nine tests stand behind that.",
+      "stack": [
+        "React Native",
+        "TypeScript",
+        "Expo"
+      ],
+      "tags": [
+        "product"
+      ],
+      "url": "https://github.com/nihanbayrak/conscious-legal"
+    },
+    {
+      "n": "04",
+      "title": "Ojin Avatar Agent",
+      "kind": "Real-time system",
+      "status": "Public",
+      "blurb": "Speech goes in, a lip-synced talking head comes out, and the whole pipeline runs live.",
+      "stack": [
+        "Gemini",
+        "Ojin Flashhead",
+        "Web Audio"
+      ],
+      "tags": [
+        "agents",
+        "image"
+      ],
+      "url": "https://github.com/nihanbayrak/ojin-avatar-app"
+    },
+    {
+      "n": "05",
+      "title": "Soul and Face Swap",
+      "kind": "Generative image",
+      "status": "Public",
+      "blurb": "Higgsfield Soul stages the scene. WaveSpeed puts a face in it. One page, two models.",
+      "stack": [
+        "Higgsfield",
+        "WaveSpeed",
+        "HTML"
+      ],
+      "tags": [
+        "image",
+        "fashion"
+      ],
+      "url": "https://github.com/nihanbayrak/soul-faceswap-generator"
+    },
+    {
+      "n": "06",
+      "title": "This Page",
+      "kind": "Self-typesetting",
+      "status": "Nightly",
+      "blurb": "Every image here is drawn by a script from the live API, typeset in outlines, and animated on load.",
+      "stack": [
+        "Python",
+        "HarfBuzz",
+        "fontTools",
+        "Actions"
+      ],
+      "tags": [
+        "product"
+      ],
+      "url": "https://github.com/nihanbayrak/nihanbayrak"
+    }
+  ]
+}

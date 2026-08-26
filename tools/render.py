@@ -16,6 +16,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import sort3d as S3
 import typeset as T
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -117,12 +118,12 @@ def anim(name, dur, delay):
     return f'style="animation:{name} {dur}s {EASE} {delay:.2f}s both"'
 
 
-def texture(seed=7):
+def texture(seed=7, style="", defs=""):
     """Paper grain. Nothing ships flat."""
-    return (f'<style>{KEYFRAMES}</style>'
+    return (f'<style>{KEYFRAMES}{style}</style>'
             f'<defs><filter id="grain{seed}" x="0" y="0" width="100%" height="100%">'
             f'<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="{seed}"/>'
-            f'<feColorMatrix type="saturate" values="0"/></filter></defs>')
+            f'<feColorMatrix type="saturate" values="0"/></filter>{defs}</defs>')
 
 
 def ground(w, h, seed=7):
@@ -141,9 +142,9 @@ def rule(x1, y, x2, delay=0.0, color=INK, opacity=0.2, dur=1.5):
             f' style="animation:draw {dur}s {EASE} {delay:.2f}s both"/>')
 
 
-def svg(w, h, body, seed=7):
+def svg(w, h, body, seed=7, style="", defs=""):
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" '
-            f'width="{w}" height="{h}" role="img">{texture(seed)}{body}</svg>')
+            f'width="{w}" height="{h}" role="img">{texture(seed, style, defs)}{body}</svg>')
 
 
 # ---------------------------------------------------------------- banner
@@ -255,6 +256,34 @@ def card(n, item, seed, H):
     return svg(W, H, "".join(b), seed=seed)
 
 
+# ---------------------------------------------------------------- the object
+
+def object_plate():
+    """A sort, turning. The only 3D on the page, and the only thing that loops."""
+    W, H = 440, 520
+    x, right = 30, 410
+    mesh = S3.build()
+    cx, cy, s = S3.place(mesh, (54, 86, W - 108, 344))
+
+    b = [ground(W, H, seed=5)]
+    b.append(f'<g {anim("fade", .6, .05)}>'
+             + smallcaps("The Object", size=10, x=x, y=44, fill=DIM, tracking=0.24)
+             + smallcaps("Cormorant Infant", size=10, x=right, y=44, fill=DIM,
+                         tracking=0.18, anchor="end") + '</g>')
+    b.append(rule(x, 60, right, delay=.15, dur=1.1))
+
+    b.append(f'<g {anim("fade", 1.1, .45)}>' + S3.plate(cx, cy, s, mesh) + '</g>')
+
+    b.append(rule(x, 452, right, delay=.55, opacity=0.14, dur=1.0))
+    b.append(f'<g {anim("rise", .7, .68)}>'
+             + T.text("A piece of foundry type", "display", 27, x, 483, INK) + '</g>')
+    caption = "Cast in reverse, as type is \u00b7 48 plates, one turn every four seconds"
+    size = T.fit(caption.upper(), "fact", 9.5, right - x, tracking=0.16)
+    b.append(f'<g {anim("tick", .55, .80)}>'
+             + smallcaps(caption, size=size, x=x, y=503, fill=DIM, tracking=0.16) + '</g>')
+    return svg(W, H, "".join(b), seed=5, style=S3.STYLE, defs=S3.defs())
+
+
 # ---------------------------------------------------------------- main
 
 def main():
@@ -265,6 +294,7 @@ def main():
     stats = collect()
 
     written = [("banner.svg", banner(cfg["banner"])),
+               ("object.svg", object_plate()),
                ("ledger.svg", ledger(stats, cfg["banner"]))]
     # one height for every card, so the table reads as a set
     H = max(card_height(item) for item in cfg["work"])
