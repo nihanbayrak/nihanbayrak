@@ -45,3 +45,9 @@ rejected. Its numbers are usually fresher than yours — but note it runs with a
 repo-scoped `GITHUB_TOKEN` that cannot see private repositories, so anything derived
 from private repos will differ between a local run and a CI run. That is exactly why
 the stack is stated in `profile.toml` rather than counted.
+
+## One source for the project list
+
+`data/profile.toml` is authoritative. `tools/export-site-data.py` regenerates
+`data/work.json`, which is copied into the portfolio site's `data/`. Edit the toml,
+run the script, copy the file — never hand-edit `work.json` in either repo.

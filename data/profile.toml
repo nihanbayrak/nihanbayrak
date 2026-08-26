@@ -14,6 +14,7 @@ ledger_note = "Most of the work sits in private repositories. What follows is wh
 
 [[work]]
 title  = "Brief to Concept, Locally"
+tags   = ["agents","local"]
 kind   = "Multi-agent pipeline"
 status = "Public"
 blurb  = "A raw client packaging brief becomes a design brief, then a first concept image. Nothing leaves the machine."
@@ -22,6 +23,7 @@ url    = "https://github.com/nihanbayrak/Ollama_pipeline"
 
 [[work]]
 title  = "Editorial Photo Generator"
+tags   = ["image","fashion"]
 kind   = "Generative image"
 status = "Public"
 blurb  = "A selfie becomes an editorial shoot. Reference images drive style, wardrobe and pose separately."
@@ -30,6 +32,7 @@ url    = "https://github.com/nihanbayrak/editorial-photo-app"
 
 [[work]]
 title  = "Conscious"
+tags   = ["product"]
 kind   = "iOS application"
 status = "In review"
 blurb  = "A scanner for food and cosmetics that never invents an ingredient. Two hundred and sixty-nine tests stand behind that."
@@ -38,6 +41,7 @@ url    = "https://github.com/nihanbayrak/conscious-legal"
 
 [[work]]
 title  = "Ojin Avatar Agent"
+tags   = ["agents","image"]
 kind   = "Real-time system"
 status = "Public"
 blurb  = "Speech goes in, a lip-synced talking head comes out, and the whole pipeline runs live."
@@ -46,6 +50,7 @@ url    = "https://github.com/nihanbayrak/ojin-avatar-app"
 
 [[work]]
 title  = "Soul and Face Swap"
+tags   = ["image","fashion"]
 kind   = "Generative image"
 status = "Public"
 blurb  = "Higgsfield Soul stages the scene. WaveSpeed puts a face in it. One page, two models."
@@ -54,6 +59,7 @@ url    = "https://github.com/nihanbayrak/soul-faceswap-generator"
 
 [[work]]
 title  = "This Page"
+tags   = ["product"]
 kind   = "Self-typesetting"
 status = "Nightly"
 blurb  = "Every image here is drawn by a script from the live API, typeset in outlines, and animated on load."
