@@ -19,6 +19,9 @@ FACES = {
     "display_med": ("CormorantInfant.ttf", 500),
     "fact": ("ArchivoNarrow.ttf", 500),        # Archivo Narrow — small-caps metadata
     "fact_bold": ("ArchivoNarrow.ttf", 700),
+    "mono": ("JetBrainsMono.ttf", 400),
+    "mono_bold": ("JetBrainsMono.ttf", 700),
+    "mono_light": ("JetBrainsMono.ttf", 200),
 }
 
 

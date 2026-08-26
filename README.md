@@ -39,8 +39,12 @@ intact. The copy and the project list live in
 [`data/profile.toml`](data/profile.toml); the layout measures itself against real
 glyph widths rather than guessing.
 
-Cornflower ground, oxblood ink, cream structure, after a 19th-century engraved
-broadside. Paper grain and a halftone screen on every surface. Nothing ships flat.
+A README cannot be interactive — there is no JavaScript, and pointer events never
+reach an image. Motion is the part that survives, so every piece animates on load:
+the rules draw, the name rises, the figures tick into place, and the six cards
+below deal themselves out in sequence.
+
+Warm paper, near-black type, one oxblood mark. Paper grain on every surface.
 
 ## Elsewhere
 

@@ -1,9 +1,11 @@
 """Renders the profile's visuals.
 
-Era tag: 19c-engraved-broadside — ruled information cells, a table pretending to
-be a poster (the Quiet Fear broadside), with the keyhole aperture as the header's
-compositional device.
-Palette: the Wibar draw — cornflower ground, oxblood ink, cream structure.
+Direction B — editorial. Warm paper, near-black type, one oxblood mark, and
+motion that stages the reading order: the rule draws, the name rises, the facts
+tick in. Nihan chose this over the engraved-broadside and aperture directions.
+
+A README cannot be interactive — no JS, and pointer events never reach an image.
+Motion is what survives, so every piece animates on load.
 """
 import json
 import math
@@ -20,9 +22,10 @@ ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 DATA = ROOT / "data"
 
-GROUND = "#8FA8DC"   # cornflower
-INK = "#8B2027"      # oxblood
-CREAM = "#F2EBD8"    # cream
+GROUND = "#F5F1E8"   # warm off-white paper
+INK = "#1A1611"      # near-black, warm
+DIM = "#7A7266"      # secondary
+ACC = "#8B2027"      # oxblood, used once per piece
 
 USER = "nihanbayrak"
 
@@ -100,48 +103,42 @@ def collect():
 
 # ---------------------------------------------------------------- primitives
 
+KEYFRAMES = """
+  @keyframes rise { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:none } }
+  @keyframes fade { from { opacity:0 } to { opacity:1 } }
+  @keyframes draw { from { stroke-dashoffset:1400 } to { stroke-dashoffset:0 } }
+  @keyframes tick { from { opacity:0; transform:translateY(9px) } to { opacity:1; transform:none } }
+"""
+
+EASE = "cubic-bezier(.2,.7,.2,1)"
+
+
+def anim(name, dur, delay):
+    return f'style="animation:{name} {dur}s {EASE} {delay:.2f}s both"'
+
+
 def texture(seed=7):
-    """Paper grain and a halftone dot screen. Nothing ships flat."""
-    return f'''<defs>
-    <filter id="grain" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="{seed}"/>
-      <feColorMatrix type="saturate" values="0"/>
-    </filter>
-    <pattern id="halftone" width="6" height="6" patternUnits="userSpaceOnUse"
-             patternTransform="rotate(22)">
-      <circle cx="1.5" cy="1.5" r="0.85" fill="{INK}"/>
-    </pattern>
-    <radialGradient id="lamp" cx="42%" cy="34%" r="72%">
-      <stop offset="0%" stop-color="#FFF8E6"/>
-      <stop offset="62%" stop-color="{CREAM}"/>
-      <stop offset="100%" stop-color="#DCCEAE"/>
-    </radialGradient>
-  </defs>'''
+    """Paper grain. Nothing ships flat."""
+    return (f'<style>{KEYFRAMES}</style>'
+            f'<defs><filter id="grain{seed}" x="0" y="0" width="100%" height="100%">'
+            f'<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="{seed}"/>'
+            f'<feColorMatrix type="saturate" values="0"/></filter></defs>')
 
 
-def ground(w, h, fill=GROUND, dots=0.05):
-    """Printed ground: flat colour, dot screen, grain. Never white."""
-    return (
-        f'<rect width="{w}" height="{h}" fill="{fill}"/>'
-        f'<rect width="{w}" height="{h}" fill="url(#halftone)" opacity="{dots}"/>'
-        f'<rect width="{w}" height="{h}" filter="url(#grain)" opacity="0.14"'
-        f' style="mix-blend-mode:multiply"/>'
-    )
+def ground(w, h, seed=7):
+    return (f'<rect width="{w}" height="{h}" fill="{GROUND}"/>'
+            f'<rect width="{w}" height="{h}" filter="url(#grain{seed})" opacity="0.05"'
+            f' style="mix-blend-mode:multiply"/>')
 
 
 def smallcaps(s, face="fact", **kw):
-    return T.text(s.upper(), face, tracking=kw.pop("tracking", 0.16), **kw)
+    return T.text(s.upper(), face, tracking=kw.pop("tracking", 0.22), **kw)
 
 
-def rule(x1, y, x2, w=1, color=INK, opacity=0.55):
-    return (f'<line x1="{x1}" y1="{y}" x2="{x2}" y2="{y}" stroke="{color}"'
-            f' stroke-width="{w}" opacity="{opacity}"/>')
-
-
-def dingbat(x, y, r=5, color=INK, opacity=0.7):
-    """A printer's lozenge. Typographic furniture, not decoration."""
-    return (f'<path d="M{x} {y-r}L{x+r*0.62} {y}L{x} {y+r}L{x-r*0.62} {y}Z"'
-            f' fill="{color}" opacity="{opacity}"/>')
+def rule(x1, y, x2, delay=0.0, color=INK, opacity=0.2, dur=1.5):
+    return (f'<line x1="{x1}" y1="{y}" x2="{x2}" y2="{y}" stroke="{color}" stroke-width="1"'
+            f' opacity="{opacity}" stroke-dasharray="1400"'
+            f' style="animation:draw {dur}s {EASE} {delay:.2f}s both"/>')
 
 
 def svg(w, h, body, seed=7):
@@ -151,90 +148,49 @@ def svg(w, h, body, seed=7):
 
 # ---------------------------------------------------------------- banner
 
-def keyhole(cx, cy, r, stem_len, top_w, bot_w):
-    """One closed path: circle joined to a tapered stem. Her signature aperture."""
-    dy = math.sqrt(max(r * r - top_w * top_w, 1))
-    return (f"M{cx-top_w:.1f} {cy+dy:.1f} "
-            f"A{r} {r} 0 1 1 {cx+top_w:.1f} {cy+dy:.1f} "
-            f"L{cx+bot_w:.1f} {cy+stem_len:.1f} "
-            f"L{cx-bot_w:.1f} {cy+stem_len:.1f} Z")
-
-
 def banner(cfg):
-    W, H = 1280, 420
+    W, H = 1280, 400
+    x, right = 96, 1184
     b = [ground(W, H)]
 
-    # letterpress double border
-    b.append(f'<rect x="14" y="14" width="{W-28}" height="{H-28}" fill="none"'
-             f' stroke="{INK}" stroke-width="2.5" opacity="0.75"/>')
-    b.append(f'<rect x="22" y="22" width="{W-44}" height="{H-44}" fill="none"'
-             f' stroke="{INK}" stroke-width="0.8" opacity="0.5"/>')
+    # the one oxblood mark
+    b.append(f'<rect x="{x}" y="86" width="34" height="3" fill="{ACC}" {anim("fade", .6, .05)}/>')
+    b.append(f'<g {anim("fade", .7, .15)}>'
+             + smallcaps(cfg["eyebrow"], size=12.5, x=x + 52, y=92, fill=DIM, tracking=0.26) + '</g>')
 
-    # ---- the aperture. Cream field, one lamp behind it, the letter as an object.
-    cx, cy, r = 236, 176, 92
-    ap = keyhole(cx, cy, r, stem_len=182, top_w=34, bot_w=62)
-    b.append(f'<clipPath id="ap"><path d="{ap}"/></clipPath>')
-    b.append(f'<path d="{ap}" fill="url(#lamp)"/>')
+    b.append(f'<g {anim("rise", 1.0, .3)}>'
+             + T.text(cfg["name"], "display", 128, x, 214, INK) + '</g>')
+    b.append(f'<g {anim("rise", 1.0, .46)}>'
+             + T.text(cfg["line"], "display_med", 30, x, 262, DIM) + '</g>')
 
-    # engraved hatching, then the N, then the breathing lamp
-    hatch = "".join(
-        f'<line x1="{cx-140}" y1="{cy-180+i*7}" x2="{cx+140}" y2="{cy-158+i*7}"'
-        f' stroke="{INK}" stroke-width="0.6"/>' for i in range(62))
-    b.append(f'<g clip-path="url(#ap)" opacity="0.15">{hatch}</g>')
-    b.append('<g clip-path="url(#ap)">'
-             + T.text("N", "display", 168, cx, cy + 58, INK, anchor="middle")
-             + '</g>')
-    b.append(f'<g clip-path="url(#ap)"><ellipse cx="{cx-40}" cy="{cy-54}" rx="126" ry="104"'
-             f' fill="#FFF8E6" opacity="0.42"><animate attributeName="opacity"'
-             f' values="0.18;0.52;0.18" dur="9s" repeatCount="indefinite"/></ellipse></g>')
-    b.append(f'<path d="{ap}" fill="none" stroke="{INK}" stroke-width="2.4"'
-             f' stroke-linejoin="round"/>')
+    b.append(rule(x, 300, right, delay=.55))
 
-    # ---- the setting
-    x, right = 452, W - 64
-    b.append(smallcaps(cfg["eyebrow"], size=16, x=x, y=112, fill=INK, opacity=0.8))
-    b.append(rule(x, 130, right))
-    b.append(T.text(cfg["name"], "display", 112, x, 232, INK))
-    b.append(rule(x, 258, right, opacity=0.35))
-    b.append(T.text(cfg["line"], "display_med", 31, x, 296, INK, opacity=0.86))
-
-    # ---- facts in hairline cells, each fitted to its own column
-    cells = cfg["cells"]
-    cw = (right - x) / len(cells)
-    b.append(rule(x, 328, right, opacity=0.35))
-    for i, (label, value) in enumerate(cells):
-        cxx = x + i * cw
-        if i:
-            b.append(f'<line x1="{cxx-14}" y1="328" x2="{cxx-14}" y2="376"'
-                     f' stroke="{INK}" stroke-width="0.8" opacity="0.3"/>')
-        b.append(smallcaps(label, size=11, x=cxx, y=348, fill=INK, opacity=0.6,
-                           tracking=0.22))
-        size = T.fit(value.upper(), "fact_bold", 15, cw - 26, tracking=0.06)
-        b.append(smallcaps(value, face="fact_bold", size=size, x=cxx, y=369,
-                           fill=INK, tracking=0.06))
-    b.append(rule(x, 378, right, opacity=0.35))
-
-    # rotated type as a structural edge
-    b.append(f'<g transform="translate({W-40} {H-56}) rotate(-90)">'
-             + smallcaps("MMXXVI", size=12, x=0, y=0, fill=INK, opacity=0.55,
-                         tracking=0.4) + '</g>')
-    b.append(dingbat(x - 22, 121))
+    items = [(cfg["cells"][0][0], cfg["cells"][0][1]), (cfg["cells"][1][0], cfg["cells"][1][1]),
+             (cfg["cells"][2][0], cfg["cells"][2][1]), ("Stack", cfg["chiefly"])]
+    cw = (right - x) / len(items)
+    for i, (label, value) in enumerate(items):
+        cx = x + i * cw
+        size = T.fit(value.upper(), "fact_bold", 14, cw - 26, tracking=0.05)
+        b.append(f'<g {anim("tick", .6, .72 + i * .08)}>'
+                 + smallcaps(label, size=10, x=cx, y=330, fill=DIM, tracking=0.24)
+                 + smallcaps(value, face="fact_bold", size=size, x=cx, y=352, fill=INK,
+                             tracking=0.05) + '</g>')
     return svg(W, H, "".join(b))
 
 
 # ---------------------------------------------------------------- ledger
 
 def ledger(stats, cfg):
-    W, H = 1280, 208
-    b = [ground(W, H, dots=0.045)]
-    b.append(f'<rect x="10" y="10" width="{W-20}" height="{H-20}" fill="none"'
-             f' stroke="{INK}" stroke-width="2" opacity="0.7"/>')
+    W, H = 1280, 190
+    x, right = 96, 1184
+    b = [ground(W, H, seed=13)]
 
-    b.append(smallcaps("The Ledger", face="fact_bold", size=13, x=36, y=46,
-                       fill=INK, tracking=0.3))
-    b.append(smallcaps(f"github.com/{USER}", size=11, x=W - 36, y=46, fill=INK,
-                       opacity=0.6, tracking=0.18, anchor="end"))
-    b.append(rule(36, 60, W - 36))
+    b.append(f'<g {anim("fade", .6, .05)}>'
+             + smallcaps("The Ledger", face="fact_bold", size=11.5, x=x, y=44, fill=ACC,
+                         tracking=0.3)
+             + smallcaps(f"github.com/{USER}", size=10.5, x=right, y=44, fill=DIM,
+                         tracking=0.18, anchor="end") + '</g>')
+    b.append(rule(x, 60, right, delay=.15))
 
     figures = [
         ("Public repositories", str(stats["repos"])),
@@ -243,65 +199,59 @@ def ledger(stats, cfg):
         ("On GitHub since", stats["since"]),
         ("Chiefly", cfg["chiefly"]),
     ]
-    cw = (W - 72) / len(figures)
+    cw = (right - x) / len(figures)
     for i, (label, value) in enumerate(figures):
-        x = 36 + i * cw
-        if i:
-            b.append(f'<line x1="{x-16}" y1="72" x2="{x-16}" y2="158"'
-                     f' stroke="{INK}" stroke-width="0.8" opacity="0.3"/>')
-        b.append(smallcaps(label, size=10.5, x=x, y=92, fill=INK, opacity=0.65,
-                           tracking=0.2))
-        size = T.fit(value, "display", 54, cw - 30)
-        b.append(T.text(value, "display", size, x, 146, INK))
+        cx = x + i * cw
+        size = T.fit(value, "display", 52, cw - 28)
+        b.append(f'<g {anim("tick", .6, .3 + i * .09)}>'
+                 + smallcaps(label, size=10, x=cx, y=94, fill=DIM, tracking=0.24)
+                 + T.text(value, "display", size, cx, 142, INK) + '</g>')
 
-    b.append(rule(36, 168, W - 36, opacity=0.35))
-    b.append(smallcaps(cfg["ledger_note"], size=10.5, x=36, y=186, fill=INK,
-                       opacity=0.62, tracking=0.14))
-    b.append(dingbat(W - 46, 181, r=4))
+    b.append(rule(x, 158, right, delay=.8, opacity=0.14))
+    b.append(f'<g {anim("fade", .6, .95)}>'
+             + smallcaps(cfg["ledger_note"], size=10, x=x, y=176, fill=DIM, tracking=0.16)
+             + '</g>')
     return svg(W, H, "".join(b), seed=13)
 
 
 # ---------------------------------------------------------------- work cards
 
 def card_height(item):
-    """Content-driven height, so a row of cards has no dead space."""
-    y = 120 + 44 * len(T.wrap(item["title"], "display", 44, 620 - 66)[:2])
-    y += 14 + 27 * len(T.wrap(item["blurb"], "display_med", 21, 620 - 60)[:3])
-    return int(y + 74)
+    y = 118 + 44 * len(T.wrap(item["title"], "display", 44, 620 - 60)[:2])
+    y += 12 + 27 * len(T.wrap(item["blurb"], "display_med", 21, 620 - 60)[:3])
+    return int(y + 70)
 
 
 def card(n, item, seed, H):
     W = 620
-    b = [ground(W, H, dots=0.05)]
-    b.append(f'<rect x="9" y="9" width="{W-18}" height="{H-18}" fill="none"'
-             f' stroke="{INK}" stroke-width="2" opacity="0.72"/>')
+    x, right = 30, 590
+    b = [ground(W, H, seed=seed)]
+    d = 0.04 + (n - 1) * 0.045         # the row of cards deals itself out
 
-    # catalogue number, reversed out of its own cell
-    b.append(f'<path d="M9 9 H108 V64 H9 Z" fill="{INK}" opacity="0.92"/>')
-    b.append(T.text(f"{n:02d}", "display", 42, 58, 52, CREAM, anchor="middle"))
+    b.append(f'<g {anim("fade", .6, d)}>'
+             + T.text(f"{n:02d}", "display", 30, x, 46, ACC)
+             + smallcaps(item["kind"], size=10, x=x + 44, y=42, fill=DIM, tracking=0.24)
+             + smallcaps(item["status"], face="fact_bold", size=10, x=right, y=42, fill=DIM,
+                         tracking=0.16, anchor="end") + '</g>')
+    b.append(rule(x, 62, right, delay=d + .1, opacity=0.16, dur=1.2))
 
-    b.append(smallcaps(item["kind"], size=10.5, x=126, y=40, fill=INK,
-                       opacity=0.7, tracking=0.24))
-    b.append(smallcaps(item["status"], face="fact_bold", size=10.5, x=W - 30, y=40,
-                       fill=INK, opacity=0.85, tracking=0.16, anchor="end"))
-    b.append(rule(126, 64, W - 30, opacity=0.4))
-
-    y = 120
-    for line in T.wrap(item["title"], "display", 44, W - 66)[:2]:
-        b.append(T.text(line, "display", 44, 30, y, INK))
+    y = 118
+    for i, line in enumerate(T.wrap(item["title"], "display", 44, W - 60)[:2]):
+        b.append(f'<g {anim("rise", .7, d + .18 + i * .05)}>'
+                 + T.text(line, "display", 44, x, y, INK) + '</g>')
         y += 44
 
-    y += 14
-    for line in T.wrap(item["blurb"], "display_med", 21, W - 60)[:3]:
-        b.append(T.text(line, "display_med", 21, 30, y, INK, opacity=0.84))
+    y += 12
+    for i, line in enumerate(T.wrap(item["blurb"], "display_med", 21, W - 60)[:3]):
+        b.append(f'<g {anim("rise", .7, d + .30 + i * .04)}>'
+                 + T.text(line, "display_med", 21, x, y, DIM) + '</g>')
         y += 27
 
-    b.append(rule(30, H - 56, W - 30, opacity=0.35))
+    b.append(rule(x, H - 52, right, delay=d + .40, opacity=0.14, dur=1.0))
     stack = " \u00b7 ".join(item["stack"])
-    size = T.fit(stack.upper(), "fact", 10.5, W - 84, tracking=0.18)
-    b.append(smallcaps(stack, size=size, x=30, y=H - 32, fill=INK, opacity=0.72,
-                       tracking=0.18))
-    b.append(dingbat(W - 34, H - 37, r=4))
+    size = T.fit(stack.upper(), "fact", 10, W - 60, tracking=0.2)
+    b.append(f'<g {anim("tick", .55, d + .48)}>'
+             + smallcaps(stack, size=size, x=x, y=H - 28, fill=DIM, tracking=0.2) + '</g>')
     return svg(W, H, "".join(b), seed=seed)
 
 

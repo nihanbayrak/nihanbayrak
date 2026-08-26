@@ -56,6 +56,6 @@ url    = "https://github.com/nihanbayrak/soul-faceswap-generator"
 title  = "This Page"
 kind   = "Self-typesetting"
 status = "Nightly"
-blurb  = "Every image here is drawn by a script from the live API, in outlines, on a printed ground."
+blurb  = "Every image here is drawn by a script from the live API, typeset in outlines, and animated on load."
 stack  = ["Python", "HarfBuzz", "fontTools", "Actions"]
 url    = "https://github.com/nihanbayrak/nihanbayrak"
