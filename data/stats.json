@@ -9,7 +9,7 @@
     ],
     [
       "JavaScript",
-      1
+      2
     ],
     [
       "Jupyter Notebook",
@@ -17,11 +17,6 @@
     ]
   ],
   "stars": 0,
-<<<<<<< HEAD
-  "commits": 20,
-  "contributions": 45
-=======
-  "commits": 0,
-  "contributions": 24
->>>>>>> 06f325a (Generate the site's work list from profile.toml)
+  "commits": 30,
+  "contributions": 61
 }
