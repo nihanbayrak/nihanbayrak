@@ -5,7 +5,7 @@
 <table>
 <tr>
 <td width="38%" valign="top">
-<img src="assets/object.svg" width="100%" alt="An engraved octopus turning on its axis, its eye lenses printed in oxblood">
+<img src="assets/object.webp" width="100%" alt="A brass and bone-enamel mechanical octopus turning on its axis, its lenses glowing green">
 </td>
 <td width="62%" valign="top">
 
@@ -16,8 +16,8 @@ work is in between.
 
 Turkish, English, German, and enough French to be dangerous.
 
-The thing on the left is a real mesh, turning — twelve thousand triangles, lit and
-rasterised here, then cut as line work the way a copperplate plate is cut.
+The thing on the left is a real object turning — thirty-seven thousand triangles,
+lit and rendered here rather than filmed anywhere.
 
 Python · TypeScript. Agents, generative image, evals. Most of the work sits in
 private repositories; what follows is what can be shown.
@@ -54,20 +54,22 @@ cut as hatch lines, turning in a document that allows no JavaScript.<br>
 
 ## About this page
 
-There is one image here, and it is not a picture of a render. `nautilia-octopus.obj` is a
-real mesh — 12,137 triangles — and each of its forty frames is rasterised with a z-buffer
-and a single lamp. The tone that comes out is then cut as hatching: parallel lines at a
-fixed screen angle whose *weight* carries the shading, the way a copperplate plate is cut.
-Forty frames of flat-shaded polygons would have run to megabytes and looked like a
-screensaver; this way the file scales with the number of lines rather than with the mesh.
-The hatching belongs to the plate and not to the object, so it holds still while the
-animal turns.
+The octopus is a mesh, not a video of one. `nautilia-octopus.obj` carries 37,327
+triangles across 427 separate parts — brass bands sitting on bone-enamel arms — and
+every frame of the turn is rendered here: z-buffer, smooth normals, a
+metallic-roughness shading model, and a cast shadow projected onto the floor. The
+material values are not guesses. They are the PBR figures lifted out of the source
+GLB and kept in [`data/materials.json`](data/materials.json), which is why the brass
+is that brass and the lenses actually emit.
 
-A README allows no JavaScript and no WebGL, and pointer events never reach an image. So
-the turn is a zoetrope — forty plates cycled by CSS — and the type is not type: HarfBuzz
-shapes each line and fontTools converts the glyphs to outlines, because GitHub renders
-README images inside `<img>`, which blocks webfont loading. Cormorant Infant and Archivo
-Narrow survive the trip intact.
+Shading is deferred — the triangle loop writes only depth, normal and material, and
+the lighting runs once per frame over the whole buffer. Back faces are culled by
+their vertex normals rather than by winding order, because this model's winding is
+consistent but inverted, and about 8% of its triangles disagree with it outright.
+
+It is a WebP because a shaded surface is a continuous gradient and there is no honest
+way to write forty-eight frames of one as vector paths. The background is transparent,
+so it sits on either GitHub theme, and the shadow rides in the alpha channel.
 
 Drawn by [`tools/render.py`](tools/render.py). Nothing here is a badge service.
 

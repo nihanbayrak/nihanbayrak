@@ -4,23 +4,45 @@ The `nihanbayrak/nihanbayrak` profile README — the page GitHub shows above her
 
 ## What this is
 
-One generated image and words. `tools/render.py` writes a single asset, `assets/object.svg`
-— the turning octopus. Everything else on the page is markdown.
+One generated image and words. `tools/render.py` writes a single asset, `assets/object.webp`
+— the octopus, turning. Everything else on the page is markdown.
 
-Until 27 Aug there were also a banner, a live ledger and six work cards, all drawn from the
-GitHub API and redrawn nightly. Nihan cut them: one object, and the words do the rest. They
-are in the history if they are ever wanted back, and the three rejected banner directions
-are still in `tools/variants.py`. Nothing reads the API now, so the render is deterministic
-and the nightly schedule is gone with it.
+Two rounds of cutting got it here. Until 27 Aug there were also a banner, a live ledger and
+six work cards drawn from the GitHub API and redrawn nightly; Nihan cut them. The object
+itself was then an engraving — the mesh rasterised and re-cut as hatch lines, so the whole
+thing stayed vector — and she cut that too: **it has to look like the model.** A shaded
+surface is a continuous gradient, so the page is raster now.
 
-## The one hard constraint
+Everything is in the history. The engraved renderer is `tools/engrave.py` at commit
+`9300246`, and the three rejected banner directions are still in `tools/variants.py`.
 
-GitHub renders README images inside `<img>`, which blocks external font loading. **All
-type must be converted to outlines.** `tools/typeset.py` does this with HarfBuzz (shaping,
-so kerning survives) and fontTools (outlines). Never add a `<text>` element or an
-`@font-face` — it will render in Times on someone else's machine.
+## The renderer
 
-Layout measures itself: use `T.wrap()` and `T.fit()` rather than guessing at widths.
+`tools/shade.py`. Three things in it were wrong first and are worth not repeating:
+
+- **Cull back faces by the vertex normals, not by the winding.** This model's winding is
+  consistent but *inverted* relative to its normals, and roughly 8% of triangles disagree
+  with it outright — culling on the projected area sign punches holes in the animal.
+- **Cluster vertices inside each part, never across parts.** The model is 427 objects that
+  touch but share no geometry. Weld them and the brass bands smear into the arms, in the
+  decimation and again in the smooth normals.
+- **Shade deferred.** The triangle loop writes only depth, normal and material id; the
+  lighting runs once per frame over the whole buffer. Per-triangle shading costs about
+  three times as long for the same picture.
+
+Material values are not invented. They are the PBR figures out of the source GLB, kept in
+`data/materials.json`, in **linear light** — convert to sRGB on the way out, not before.
+
+The lamp is fixed to the camera, not to the world, so the highlight holds still while the
+animal turns. A world-fixed lamp makes it sweep and strobe.
+
+## If type ever returns to an image
+
+GitHub renders README images inside `<img>`, which blocks external font loading, so any
+type in an SVG must be converted to outlines — `tools/typeset.py` does that with HarfBuzz
+and fontTools. Nothing calls it today; the page's words are all markdown. Keep it: the
+moment a `<text>` element or an `@font-face` goes into an asset, it renders in Times on
+someone else's machine.
 
 ## Design
 
@@ -70,31 +92,15 @@ run the script, copy the file — never hand-edit `work.json` in either repo.
 
 ## The object
 
-`assets/object.svg` is a real 3D mesh turning: `data/nautilia-octopus.obj`, 12,137
-triangles, clustered down from the 90k original by `tools/model3d.py`.
+`data/nautilia-octopus.obj` — 37,327 triangles, clustered down from the 90k original by
+`tools/model3d.py`, materials and part boundaries intact. `tools/export-object.py` renders
+the same object with no page around it, for use elsewhere.
 
-`tools/engrave.py` renders it. Each frame is rasterised with a z-buffer and one lamp,
-and the resulting **tone** is then cut as hatching — parallel lines at a fixed screen
-angle whose stroke *weight* carries the shading. Do not be tempted to emit the mesh as
-polygons instead: forty frames of flat-shaded triangles is megabytes of path data and
-looks like a screensaver. Output size scales with hatch lines, not with the mesh.
-
-Three things that are easy to get wrong here, all of which were:
-
-- **Normals must be computed in camera space, not from projected pixels.** Screen x and
-  y are multiplied by the scale and z is not, so a cross product taken over there has a
-  meaningless z and lights the whole model flat.
-- **Winding is not consistent** across the model's 427 parts. Whatever the z-buffer
-  keeps is by definition facing the viewer, so flip every normal toward the camera and
-  light one-sided from there.
-- **A one-pixel crease prints as nothing.** Hatch lines are ~12px apart; depth
-  discontinuities have to be widened before the engraver's lines can cross them.
-
-The hatching is fixed to the plate, not to the object — it must not turn with it.
-There is deliberately no paper fill under the animal, so the card's grain reads through.
+The published image is transparent, so it sits on either GitHub theme, and the cast shadow
+rides in the alpha channel rather than on a painted floor.
 
 ## Dependencies
 
-`fonttools uharfbuzz brotli numpy`. `render.py` imports all of them at module level, so
-a missing one breaks the whole render, not just the piece that needs it. Keep the
-workflow's pip line and this list in step.
+`numpy pillow` — that is all `render.py` needs. `fonttools uharfbuzz brotli` are only for
+`typeset.py` and `variants.py`, which nothing in the render path calls; install them if you
+touch those. Keep the workflow's pip line and this list in step.

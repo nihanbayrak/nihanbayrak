@@ -27,7 +27,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - run: pip install --quiet fonttools uharfbuzz brotli numpy
+      - run: pip install --quiet numpy pillow
 
       - name: Render
         run: python tools/render.py
