@@ -16,7 +16,8 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-import sort3d as S3
+import engrave
+import model3d
 import typeset as T
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -259,29 +260,34 @@ def card(n, item, seed, H):
 # ---------------------------------------------------------------- the object
 
 def object_plate():
-    """A sort, turning. The only 3D on the page, and the only thing that loops."""
-    W, H = 440, 520
+    """The octopus, turning. The only 3D on the page, and the only thing that loops."""
+    W, H = 440, 500
     x, right = 30, 410
-    mesh = S3.build()
-    cx, cy, s = S3.place(mesh, (54, 86, W - 108, 344))
+
+    v, f, accent = model3d.load_obj(DATA / "nautilia-octopus.obj")
+    # the box carries the aspect of the whole revolution, arms at full spread --
+    # square it off and the object floats in a quarter of the plate
+    plate = engrave.Engraver(v, f, accent, (48, 78, 344, 313))
 
     b = [ground(W, H, seed=5)]
     b.append(f'<g {anim("fade", .6, .05)}>'
              + smallcaps("The Object", size=10, x=x, y=44, fill=DIM, tracking=0.24)
-             + smallcaps("Cormorant Infant", size=10, x=right, y=44, fill=DIM,
+             + smallcaps("Nautilia", size=10, x=right, y=44, fill=DIM,
                          tracking=0.18, anchor="end") + '</g>')
     b.append(rule(x, 60, right, delay=.15, dur=1.1))
 
-    b.append(f'<g {anim("fade", 1.1, .45)}>' + S3.plate(cx, cy, s, mesh) + '</g>')
+    b.append(f'<g {anim("fade", 1.2, .4)}>' + plate.plate() + '</g>')
 
-    b.append(rule(x, 452, right, delay=.55, opacity=0.14, dur=1.0))
-    b.append(f'<g {anim("rise", .7, .68)}>'
-             + T.text("A piece of foundry type", "display", 27, x, 483, INK) + '</g>')
-    caption = "Cast in reverse, as type is \u00b7 48 plates, one turn every four seconds"
-    size = T.fit(caption.upper(), "fact", 9.5, right - x, tracking=0.16)
-    b.append(f'<g {anim("tick", .55, .80)}>'
-             + smallcaps(caption, size=size, x=x, y=503, fill=DIM, tracking=0.16) + '</g>')
-    return svg(W, H, "".join(b), seed=5, style=S3.STYLE, defs=S3.defs())
+    b.append(rule(x, 410, right, delay=.6, opacity=0.14, dur=1.0))
+    b.append(f'<g {anim("rise", .7, .72)}>'
+             + T.text("An octopus, turning", "display", 27, x, 441, INK) + '</g>')
+    for i, line in enumerate(("Rasterised from the mesh, then cut as line work",
+                              f"{engrave.FRAMES} plates \u00b7 one turn every five seconds")):
+        size = T.fit(line.upper(), "fact", 9.5, right - x, tracking=0.16)
+        b.append(f'<g {anim("tick", .55, .82 + i * .06)}>'
+                 + smallcaps(line, size=size, x=x, y=461 + i * 15, fill=DIM,
+                             tracking=0.16) + '</g>')
+    return svg(W, H, "".join(b), seed=5, style=engrave.STYLE)
 
 
 # ---------------------------------------------------------------- main

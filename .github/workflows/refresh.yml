@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - run: pip install --quiet fonttools uharfbuzz brotli skia-pathops
+      - run: pip install --quiet fonttools uharfbuzz brotli numpy
 
       - name: Render
         env:

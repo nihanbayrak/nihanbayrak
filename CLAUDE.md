@@ -52,9 +52,33 @@ the stack is stated in `profile.toml` rather than counted.
 `data/work.json`, which is copied into the portfolio site's `data/`. Edit the toml,
 run the script, copy the file — never hand-edit `work.json` in either repo.
 
+## The object
+
+`assets/object.svg` is a real 3D mesh turning: `data/nautilia-octopus.obj`, 12,137
+triangles, clustered down from the 90k original by `tools/model3d.py`.
+
+`tools/engrave.py` renders it. Each frame is rasterised with a z-buffer and one lamp,
+and the resulting **tone** is then cut as hatching — parallel lines at a fixed screen
+angle whose stroke *weight* carries the shading. Do not be tempted to emit the mesh as
+polygons instead: forty frames of flat-shaded triangles is megabytes of path data and
+looks like a screensaver. Output size scales with hatch lines, not with the mesh.
+
+Three things that are easy to get wrong here, all of which were:
+
+- **Normals must be computed in camera space, not from projected pixels.** Screen x and
+  y are multiplied by the scale and z is not, so a cross product taken over there has a
+  meaningless z and lights the whole model flat.
+- **Winding is not consistent** across the model's 427 parts. Whatever the z-buffer
+  keeps is by definition facing the viewer, so flip every normal toward the camera and
+  light one-sided from there.
+- **A one-pixel crease prints as nothing.** Hatch lines are ~12px apart; depth
+  discontinuities have to be widened before the engraver's lines can cross them.
+
+The hatching is fixed to the plate, not to the object — it must not turn with it.
+There is deliberately no paper fill under the animal, so the card's grain reads through.
+
 ## Dependencies
 
-`fonttools uharfbuzz brotli skia-pathops`. `skia-pathops` is needed by `tools/sort3d.py`
-for boolean path operations, and `render.py` imports it at module level — so a missing
-`skia-pathops` breaks the whole render, not just the object. Keep the workflow's pip
-line and this list in step.
+`fonttools uharfbuzz brotli numpy`. `render.py` imports all of them at module level, so
+a missing one breaks the whole render, not just the piece that needs it. Keep the
+workflow's pip line and this list in step.
