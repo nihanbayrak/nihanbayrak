@@ -4,9 +4,14 @@ The `nihanbayrak/nihanbayrak` profile README — the page GitHub shows above her
 
 ## What this is
 
-Every visual is generated, not hand-drawn. `tools/render.py` pulls live numbers from
-the GitHub API and typesets SVGs into `assets/`. A nightly Action re-runs it and commits
-the diff.
+One generated image and words. `tools/render.py` writes a single asset, `assets/object.svg`
+— the turning octopus. Everything else on the page is markdown.
+
+Until 27 Aug there were also a banner, a live ledger and six work cards, all drawn from the
+GitHub API and redrawn nightly. Nihan cut them: one object, and the words do the rest. They
+are in the history if they are ever wanted back, and the three rejected banner directions
+are still in `tools/variants.py`. Nothing reads the API now, so the render is deterministic
+and the nightly schedule is gone with it.
 
 ## The one hard constraint
 
@@ -19,32 +24,43 @@ Layout measures itself: use `T.wrap()` and `T.fit()` rather than guessing at wid
 
 ## Design
 
-Governed by `ninu-design` in the executive-assistant repo. Era tag: `19c-engraved-broadside`
-— ruled information cells, a table pretending to be a poster. Palette is the Wibar draw,
-three values only: cornflower ground `#8FA8DC`, oxblood ink `#8B2027`, cream structure
-`#F2EBD8`. Grain and halftone on every surface; nothing ships flat.
+Governed by `ninu-design` in the executive-assistant repo. **Direction B — editorial**,
+chosen by Nihan on 26 Aug after she rejected the broadside direction outright: warm paper
+`#F5F1E8`, near-black `#1A1611`, one oxblood mark `#8B2027`, two typefaces. This file used
+to name a cornflower broadside palette that was never shipped. Grain on every surface;
+nothing ships flat.
+
+One accent per piece, and on the object it is spent on the two eye lenses — the surface a
+press would actually ink.
 
 ## Editing
 
-Copy and the project list live in `data/profile.toml`. Change that, not the renderer.
+The page's copy is now markdown in `README.md` — edit it there. `data/profile.toml` no
+longer feeds the README; it survives as the source for the portfolio site (see below), so
+**the project list exists in two places and can drift.** Change one, check the other.
 
 ```bash
-pip install fonttools uharfbuzz brotli
-GITHUB_TOKEN=$(gh auth token) python tools/render.py
+python -m venv .venv && .venv/bin/pip install fonttools uharfbuzz brotli numpy
+.venv/bin/python tools/render.py
 ```
+
+No token needed any more. The shell has conda base active, so use a venv or the installs
+land in `/opt/anaconda3`.
 
 **Verify in a browser before pushing.** These bugs are invisible in the source — the first
 draft had a broken keyhole, colliding table cells and three overflowing text runs, none of
 which were visible by reading the SVG.
 
-## The Action races you
+## Two things will overwrite you
 
-`refresh.yml` runs on any push touching `tools/**` or `data/**` and commits its own
-redraw. Always `git pull --rebase` before rendering locally, or your next push is
-rejected. Its numbers are usually fresher than yours — but note it runs with a
-repo-scoped `GITHUB_TOKEN` that cannot see private repositories, so anything derived
-from private repos will differ between a local run and a CI run. That is exactly why
-the stack is stated in `profile.toml` rather than counted.
+`refresh.yml` runs on a push to `main` touching `tools/**` or `data/**` and commits its own
+redraw. It is much less dangerous than it was — the render is deterministic now, so it
+should never produce a diff — but `git pull --rebase` before pushing anyway.
+
+**A second session works in this repo.** On 26 Aug it swept an untracked `tools/sort3d.py`
+into a commit with `git add -A` during a rebase and broke the nightly redraw. Check
+`git log` and `git status` before assuming local state is yours, and stage specific paths
+during a conflict, never `-A`.
 
 ## One source for the project list
 

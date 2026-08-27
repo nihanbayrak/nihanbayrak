@@ -1,4 +1,6 @@
-![Nihan Bayrak — AI Specialist, Berlin](assets/banner.svg)
+# Nihan Bayrak
+
+**Berlin · AI Specialist · WIN Creating Images**
 
 <table>
 <tr>
@@ -17,57 +19,57 @@ Turkish, English, German, and enough French to be dangerous.
 The thing on the left is a real mesh, turning — twelve thousand triangles, lit and
 rasterised here, then cut as line work the way a copperplate plate is cut.
 
+Python · TypeScript. Agents, generative image, evals. Most of the work sits in
+private repositories; what follows is what can be shown.
+
 </td>
 </tr>
 </table>
 
-![](assets/ledger.svg)
-
 ## Selected work
 
-<table>
-<tr>
-<td width="50%"><a href="https://github.com/nihanbayrak/Ollama_pipeline"><img src="assets/work-01.svg" alt="Brief to Concept, Locally — DSPy, LangGraph, Ollama"></a></td>
-<td width="50%"><a href="https://github.com/nihanbayrak/editorial-photo-app"><img src="assets/work-02.svg" alt="Editorial Photo Generator — Gemini"></a></td>
-</tr>
-<tr>
-<td width="50%"><a href="https://github.com/nihanbayrak/conscious-legal"><img src="assets/work-03.svg" alt="Conscious — an iOS scanner for food and cosmetics"></a></td>
-<td width="50%"><a href="https://github.com/nihanbayrak/ojin-avatar-app"><img src="assets/work-04.svg" alt="Ojin Avatar Agent — real-time lip-synced avatar"></a></td>
-</tr>
-<tr>
-<td width="50%"><a href="https://github.com/nihanbayrak/soul-faceswap-generator"><img src="assets/work-05.svg" alt="Soul and Face Swap — Higgsfield and WaveSpeed"></a></td>
-<td width="50%"><a href="https://github.com/nihanbayrak/nihanbayrak"><img src="assets/work-06.svg" alt="This page, which typesets itself"></a></td>
-</tr>
-</table>
+**[Brief to Concept, Locally](https://github.com/nihanbayrak/Ollama_pipeline)** — a raw client
+packaging brief becomes a design brief, then a first concept image. Nothing leaves the machine.<br>
+`DSPy · LangGraph · Ollama · Python`
+
+**[Editorial Photo Generator](https://github.com/nihanbayrak/editorial-photo-app)** — a selfie
+becomes an editorial shoot. Reference images drive style, wardrobe and pose separately.<br>
+`Gemini · JavaScript`
+
+**[Conscious](https://github.com/nihanbayrak/conscious-legal)** — a scanner for food and
+cosmetics that never invents an ingredient. Two hundred and sixty-nine tests stand behind that.<br>
+`React Native · TypeScript · Expo`
+
+**[Ojin Avatar Agent](https://github.com/nihanbayrak/ojin-avatar-app)** — speech goes in, a
+lip-synced talking head comes out, and the whole pipeline runs live.<br>
+`Gemini · Ojin Flashhead · Web Audio`
+
+**[Soul and Face Swap](https://github.com/nihanbayrak/soul-faceswap-generator)** — Higgsfield
+Soul stages the scene. WaveSpeed puts a face in it. One page, two models.<br>
+`Higgsfield · WaveSpeed · HTML`
+
+**[This page](https://github.com/nihanbayrak/nihanbayrak)** — a 3D mesh rasterised and then
+cut as hatch lines, turning in a document that allows no JavaScript.<br>
+`Python · numpy · fontTools · Actions`
 
 ## About this page
 
-Nothing here is a badge service. Every image is drawn by
-[`tools/render.py`](tools/render.py) from the live GitHub API and redrawn nightly
-by [a workflow](.github/workflows/refresh.yml).
+There is one image here, and it is not a picture of a render. `nautilia-octopus.obj` is a
+real mesh — 12,137 triangles — and each of its forty frames is rasterised with a z-buffer
+and a single lamp. The tone that comes out is then cut as hatching: parallel lines at a
+fixed screen angle whose *weight* carries the shading, the way a copperplate plate is cut.
+Forty frames of flat-shaded polygons would have run to megabytes and looked like a
+screensaver; this way the file scales with the number of lines rather than with the mesh.
+The hatching belongs to the plate and not to the object, so it holds still while the
+animal turns.
 
-GitHub renders README images inside `<img>`, which blocks webfont loading — so the
-type is not type. HarfBuzz shapes each line and fontTools converts the glyphs to
-outlines, which is why Cormorant Infant and Archivo Narrow survive the trip
-intact. The copy and the project list live in
-[`data/profile.toml`](data/profile.toml); the layout measures itself against real
-glyph widths rather than guessing.
+A README allows no JavaScript and no WebGL, and pointer events never reach an image. So
+the turn is a zoetrope — forty plates cycled by CSS — and the type is not type: HarfBuzz
+shapes each line and fontTools converts the glyphs to outlines, because GitHub renders
+README images inside `<img>`, which blocks webfont loading. Cormorant Infant and Archivo
+Narrow survive the trip intact.
 
-A README cannot be interactive — there is no JavaScript, and pointer events never
-reach an image. Motion is the part that survives, so every piece animates on load:
-the rules draw, the name rises, the figures tick into place, and the six cards
-below deal themselves out in sequence.
-
-The octopus is the same constraint taken further. There is no WebGL either, so its
-turn is a zoetrope: forty orthographic projections cycled by CSS. Each one is
-rasterised properly — z-buffer, one lamp — and the tone that comes out is then cut
-as hatching, parallel lines at a fixed angle whose *weight* carries the shading
-rather than their spacing. Forty frames of flat-shaded polygons would have run to
-megabytes and looked like a screensaver; this way the file scales with the number
-of lines, not with the mesh. The hatching belongs to the plate and not to the
-object, so it holds still while the animal turns.
-
-Warm paper, near-black type, one oxblood mark. Paper grain on every surface.
+Drawn by [`tools/render.py`](tools/render.py). Nothing here is a badge service.
 
 ## Elsewhere
 
