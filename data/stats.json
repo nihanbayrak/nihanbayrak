@@ -1,11 +1,11 @@
 {
-  "repos": 31,
+  "repos": 30,
   "followers": 28,
   "since": "2017",
   "langs": [
     [
       "HTML",
-      5
+      4
     ],
     [
       "JavaScript",
@@ -17,6 +17,6 @@
     ]
   ],
   "stars": 0,
-  "commits": 36,
-  "contributions": 70
+  "commits": 226,
+  "contributions": 260
 }
