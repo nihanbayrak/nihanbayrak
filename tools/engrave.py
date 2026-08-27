@@ -316,15 +316,20 @@ class Engraver:
         self.py = (self.oy - by) * SS
         self.bx, self.by = bx, by
 
-    def frame(self, theta):
+    def frame(self, theta, fill=None):
+        """One projection. `fill` lays paper under the animal; the README wants none,
+        so its card's own grain reads straight through the hatching."""
         P = camera(self.v, theta, self.tilt)
         tone, mask, hot = _raster(P, self.f, self.accent, self.w, self.h,
                                   self.scale * SS, self.px, self.py)
         ox, oy = self.bx, self.by
 
-        # No paper fill under the object: the card's grain should read straight
-        # through it, and the fill was a third of every frame's bytes.
+        # No paper fill by default: on the card the grain should read straight
+        # through, and the fill was a third of every frame's bytes.
         body = []
+        if fill:
+            body.append(f'<path d="{_outline(mask, ox, oy)}" fill="{fill}"'
+                        f' fill-rule="evenodd"/>')
 
         runs = _hatch(tone, mask, HATCH, ox, oy, LEVELS)
         dark = _hatch(tone, mask & (tone < LEVELS[-1][0]), CROSS, ox, oy, LEVELS[-1:])
@@ -346,13 +351,13 @@ class Engraver:
                             f' stroke="{ACC}" stroke-width=".7"/>')
         return "".join(body)
 
-    def plate(self):
+    def plate(self, fill=None):
         step = TURN / self.frames
         out = []
         for i in range(self.frames):
             delay = -((self.frames - i) % self.frames) * step
             out.append(f'<g class="fr" style="animation-delay:{delay:.3f}s">'
-                       + self.frame(math.tau * i / self.frames) + '</g>')
+                       + self.frame(math.tau * i / self.frames, fill) + '</g>')
         return "".join(out)
 
 
