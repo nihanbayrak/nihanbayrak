@@ -99,6 +99,13 @@ the same object with no page around it, for use elsewhere.
 The published image is transparent, so it sits on either GitHub theme, and the cast shadow
 rides in the alpha channel rather than on a painted floor.
 
+Since 24 Oct it is the page's centred hero, shown at 700 wide above the name, and the
+canvas is 1234 × 706. The lamp sits upper right, so the shadow runs about 190 px left of
+the animal; at the old 520-wide canvas it was cut off in 37 of 48 frames. The empty right
+side matches the shadow's room on the left so the body stays centred under the name.
+`shade.py` blurs the shadow with `np.roll`, which **wraps** — anything that reaches one
+edge reappears on the other, so keep a margin round the shadow if you reframe.
+
 ## Dependencies
 
 `numpy pillow` — that is all `render.py` needs. `fonttools uharfbuzz brotli` are only for

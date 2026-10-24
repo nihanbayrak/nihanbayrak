@@ -17,8 +17,11 @@ ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 DATA = ROOT / "data"
 
-CANVAS = (520, 565)          # rendered above display size so it stays crisp on retina
-BOX = (32, 20, 456, 410)     # the object's own box; the shadow falls outside it
+CANVAS = (1234, 706)         # shown at 700 wide, so it stays crisp on retina
+BOX = (275, 40, 684, 615)    # x, y, w, h of the object itself. The lamp is upper right,
+                             # so the shadow runs ~190 px left of the box; the room on the
+                             # left is for it, and as much again on the right keeps the animal
+                             # centred under the name. At 520 wide it was cut off in 37 of 48 frames.
 FRAMES = 48
 MS = 100                     # 4.8 seconds a revolution
 
