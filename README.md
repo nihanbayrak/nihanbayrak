@@ -1,24 +1,15 @@
-<p align="center">
-  <img src="assets/object.webp" width="700" alt="A brass and bone enamel mechanical octopus turning slowly on its axis, green lenses for eyes, its shadow pooling to the left">
+<p>
+  <img src="assets/object.webp" width="100%" alt="A brass and bone enamel mechanical octopus automaton turning slowly on warm paper, green lenses for eyes, its shadow printed to the left">
 </p>
 
-<h1 align="center">Nihan Bayrak</h1>
-
-<p align="center">
-  <b>AI specialist · Product manager · Solutions engineer</b><br>
-  Berlin · <a href="https://www.linkedin.com/in/nihan-bayrak/">LinkedIn</a> · <a href="https://consciouseyes.app">consciouseyes.app</a>
-</p>
-
-<br>
-
-<p align="center">
+<p>
   <picture>
-    <source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/intro-dark-narrow.svg">
-    <source media="(prefers-color-scheme: dark)" srcset="assets/intro-dark.svg">
-    <source media="(max-width: 600px)" srcset="assets/intro-light-narrow.svg">
-    <img src="assets/intro-light.svg" width="800" alt="Care is my building language. AI made building fast. Most people spend that speed on building more. I spend it on attention. The hours AI gives back, I put into planning: what we are making, why, and how we will know it worked. Then I track it, measure it and improve it. When the numbers say the system is wrong, I take the whole thing apart and rethink it, even when that is the uncomfortable thing to do. Especially then. I trust my taste, and I test it. Most people in this field have no visual vocabulary; most people with one cannot ship. I work in between. By day I build AI systems at WIN Creating Images, a creative packaging agency in Berlin.">
+    <source media="(max-width: 600px)" srcset="assets/intro-narrow.svg">
+    <img src="assets/intro.svg" width="100%" alt="Care is my building language. AI made building fast. Most people spend that speed on building more. I spend it on attention. The hours AI gives back, I put into planning: what we are making, why, and how we will know it worked. Then I track it, measure it and improve it. When the numbers say the system is wrong, I take the whole thing apart and rethink it, even when that is the uncomfortable thing to do. Especially then. I trust my taste, and I test it. Most people in this field have no visual vocabulary; most people with one cannot ship. I work in between. Nihan Bayrak. AI specialist, product manager, solutions engineer. Berlin. By day, WIN Creating Images.">
   </picture>
 </p>
+
+<a href="https://www.linkedin.com/in/nihan-bayrak/">LinkedIn</a> · <a href="https://consciouseyes.app">consciouseyes.app</a>
 
 ## Three jobs, three proofs
 
@@ -58,7 +49,7 @@ material never touches an outside API.<br>
 
 The octopus is a mesh, not a video: 37,327 triangles in 427 parts, rendered frame by frame
 in plain numpy with a depth buffer, smooth normals and the PBR materials lifted from the
-source model, then a shadow cast onto a floor that is not there. The words above move
-because they are not text. A README allows no script and no hover, so every letter is its own
-outline with its own timing. Drawn by [`tools/render.py`](tools/render.py) and
-[`tools/dance.py`](tools/dance.py).
+source model, its shadow printed onto the paper it stands on. The sheet under it is set like
+a 1922 magazine page, and its headline ticks like the automaton above it: every letter steps
+up and back through held positions, because a README allows no script and no hover. Drawn by
+[`tools/render.py`](tools/render.py) and [`tools/dance.py`](tools/dance.py).

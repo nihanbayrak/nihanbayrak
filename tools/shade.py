@@ -265,18 +265,24 @@ class Shader:
         return np.clip(out, 0, 1), alpha[..., 0]
 
 
-def turntable(sh, path, duration=100, quality=82):
+def turntable(sh, path, duration=100, quality=82, background=False):
     """One revolution as an animated WebP.
 
     WebP rather than GIF: the whole subject is smooth gradient and 256 colours
     dither it into mud. Browsers have supported animated WebP for years and
     GitHub serves it like any other image.
+
+    With background, the animal stands on grained paper and the shadow is printed
+    on it; without, the shadow rides in the alpha and the page is the floor.
     """
     from PIL import Image
 
     frames = []
     for i in range(sh.frames):
-        rgb, a = sh.frame(math.tau * i / sh.frames, background=False)
+        rgb, a = sh.frame(math.tau * i / sh.frames, background=background)
+        if background:
+            frames.append(Image.fromarray((rgb * 255 + 0.5).astype(np.uint8), mode="RGB"))
+            continue
         rgba = np.concatenate([rgb, a[..., None]], axis=2)
         frames.append(Image.fromarray((rgba * 255 + 0.5).astype(np.uint8), mode="RGBA"))
     frames[0].save(path, save_all=True, append_images=frames[1:], duration=duration,

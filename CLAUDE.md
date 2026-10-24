@@ -4,21 +4,33 @@ The `nihanbayrak/nihanbayrak` profile README — the page GitHub shows above her
 
 ## What this is
 
-Two generated pieces and some markdown. `tools/render.py` writes `assets/object.webp`, the
-octopus turning. `tools/dance.py` writes the introduction, "Care is my building language."
-and the four paragraphs under it, as `assets/intro-{light,dark}{,-narrow}.svg`; the README
-picks one through `<picture>` by theme and by width (600 px and under gets the narrow cut,
-because the wide one would shrink the type below reading size on a phone). The copy lives in
-`dance.py` and again in the README's alt text: change both together. Everything from "Three
-jobs" down is markdown.
+Two printed pieces and some markdown, laid out under `ninu-design`
+(`NB_executive_assistant/.claude/skills/ninu-design`), applied on 24 Oct:
 
-Nihan asked for the letters to dance on hover. A README cannot do that (no script, and
-pointer events never reach an image), so the introduction moves on its own: the words rise
-in on load, a hop runs through the headline every four seconds, and a smaller ripple
-follows it through the paragraphs. Reduced motion gets it standing still. Glyphs are drawn
-once in `<defs>` and placed with `<use>`, which keeps each file near 80 KB. `dance.py` needs
-fonttools and uharfbuzz, which the workflow does not install, so the Action never calls it:
-run it by hand and commit all four SVGs.
+- **Era:** `victorian-automaton-3d`, from the brass-and-enamel octopus automaton in her
+  moodboard (`Screenshot 2026-08-27 at 11.25.54`), one built object on a cream ground with
+  one soft shadow. The page under it borrows the 1922 Ladies' Home Journal page.
+- **The plate.** `tools/render.py` writes `assets/object.webp`: the octopus turning on grained
+  paper `#F5F1E8`, its shadow printed on the paper. No longer transparent: there is no dark
+  mode, there is a printed object on whatever GitHub's page is.
+- **The sheet.** `tools/dance.py` writes `assets/intro.svg` and `assets/intro-narrow.svg`
+  (600 px and under, picked through `<picture>`): a ruled panel of small-caps facts, an
+  oxblood hairline between columns, the headline, a deck, and body with a drop cap.
+  Three values: paper, tobacco ink `#1A1611`, oxblood `#8B2027`. Cormorant Infant Light is
+  the character, Libre Baskerville does the reading, Archivo Narrow carries the facts. The
+  sheet's paper sits under a grain filter that darkens it by about 7, so its base is
+  `#FCF8EF`; it measures within 2 of the plate. Re-measure if you touch the grain.
+- **Signature: clockwork.** Only the headline moves. Each letter steps up and back through
+  held positions (`steps(1, end)`), and the step runs along the line like a cam. Her skill's
+  rules held it there: body text never animates, nothing waits at opacity 0, no spring
+  bounce. Reduced motion gets the line at rest.
+
+Nihan first asked for hover, then for the whole text to dance. A README cannot hover (no
+script, and pointer events never reach an image), and her own skill keeps body text still,
+so the display line carries the motion. The copy lives in `dance.py` and again in the
+README's alt text: change both together. `dance.py` needs fonttools and uharfbuzz, which
+the workflow does not install, so the Action never calls it: run it by hand and commit both
+SVGs. Everything from the links line down is markdown.
 
 **No dashes in the copy.** Nihan's rule from 24 Oct: no em or en dashes in the README, and
 avoid hyphenated words where a plain phrase works.
