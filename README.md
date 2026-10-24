@@ -28,15 +28,10 @@ know it worked. Then I track it, measure it and improve it. When the numbers say
 system is wrong, I take the whole thing apart and rethink it, even when that is the
 uncomfortable thing to do. Especially then.
 
-You can see it in the details. A seasonal tip that names the months instead of calling
-late October peak season. A palm oil warning that appears once, not twice. A highlight
-that holds still while the octopus turns, because a moving one strobes.
-
 I trust my taste, and I test it. Most people in this field have no visual vocabulary;
 most people with one cannot ship. I work in between.
 
 By day I build AI systems at WIN Creating Images, a creative packaging agency in Berlin.
-Turkish, English, German, and enough French to be dangerous.
 
 ## Three jobs, three proofs
 
