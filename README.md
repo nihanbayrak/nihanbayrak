@@ -13,25 +13,12 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/care-dark.svg">
-    <img src="assets/care-light.svg" width="620" alt="Care is my building language.">
+    <source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/intro-dark-narrow.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/intro-dark.svg">
+    <source media="(max-width: 600px)" srcset="assets/intro-light-narrow.svg">
+    <img src="assets/intro-light.svg" width="800" alt="Care is my building language. AI made building fast. Most people spend that speed on building more. I spend it on attention. The hours AI gives back, I put into planning: what we are making, why, and how we will know it worked. Then I track it, measure it and improve it. When the numbers say the system is wrong, I take the whole thing apart and rethink it, even when that is the uncomfortable thing to do. Especially then. I trust my taste, and I test it. Most people in this field have no visual vocabulary; most people with one cannot ship. I work in between. By day I build AI systems at WIN Creating Images, a creative packaging agency in Berlin.">
   </picture>
 </p>
-
-<br>
-
-AI made building fast. Most people spend that speed on building more. I spend it on
-attention.
-
-The hours AI gives back, I put into planning: what we are making, why, and how we will
-know it worked. Then I track it, measure it and improve it. When the numbers say the
-system is wrong, I take the whole thing apart and rethink it, even when that is the
-uncomfortable thing to do. Especially then.
-
-I trust my taste, and I test it. Most people in this field have no visual vocabulary;
-most people with one cannot ship. I work in between.
-
-By day I build AI systems at WIN Creating Images, a creative packaging agency in Berlin.
 
 ## Three jobs, three proofs
 
@@ -71,7 +58,7 @@ material never touches an outside API.<br>
 
 The octopus is a mesh, not a video: 37,327 triangles in 427 parts, rendered frame by frame
 in plain numpy with a depth buffer, smooth normals and the PBR materials lifted from the
-source model, then a shadow cast onto a floor that is not there. The line above dances
-because it is not text. A README allows no script and no hover, so every letter is its own
+source model, then a shadow cast onto a floor that is not there. The words above move
+because they are not text. A README allows no script and no hover, so every letter is its own
 outline with its own timing. Drawn by [`tools/render.py`](tools/render.py) and
 [`tools/dance.py`](tools/dance.py).

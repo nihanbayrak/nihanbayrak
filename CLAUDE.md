@@ -4,15 +4,21 @@ The `nihanbayrak/nihanbayrak` profile README — the page GitHub shows above her
 
 ## What this is
 
-Two generated images and words. `tools/render.py` writes `assets/object.webp`, the octopus
-turning. `tools/dance.py` writes `assets/care-light.svg` and `assets/care-dark.svg`, the line
-"Care is my building language." with every letter hopping in a wave; GitHub picks one per
-theme through `<picture>`. Everything else on the page is markdown.
+Two generated pieces and some markdown. `tools/render.py` writes `assets/object.webp`, the
+octopus turning. `tools/dance.py` writes the introduction, "Care is my building language."
+and the four paragraphs under it, as `assets/intro-{light,dark}{,-narrow}.svg`; the README
+picks one through `<picture>` by theme and by width (600 px and under gets the narrow cut,
+because the wide one would shrink the type below reading size on a phone). The copy lives in
+`dance.py` and again in the README's alt text: change both together. Everything from "Three
+jobs" down is markdown.
 
 Nihan asked for the letters to dance on hover. A README cannot do that (no script, and
-pointer events never reach an image), so they dance on their own every five seconds and
-stand still under reduced motion. `dance.py` needs fonttools and uharfbuzz, which the
-workflow does not install, so the Action never calls it: run it by hand and commit both SVGs.
+pointer events never reach an image), so the introduction moves on its own: the words rise
+in on load, a hop runs through the headline every four seconds, and a smaller ripple
+follows it through the paragraphs. Reduced motion gets it standing still. Glyphs are drawn
+once in `<defs>` and placed with `<use>`, which keeps each file near 80 KB. `dance.py` needs
+fonttools and uharfbuzz, which the workflow does not install, so the Action never calls it:
+run it by hand and commit all four SVGs.
 
 **No dashes in the copy.** Nihan's rule from 24 Oct: no em or en dashes in the README, and
 avoid hyphenated words where a plain phrase works.
