@@ -133,10 +133,10 @@ class Sheet:
         self.marks.append(f'<line x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}" '
                           f'stroke="{colour}" stroke-width="{weight}"/>')
 
-    def svg(self, W, H, alt):
+    def svg(self, W, H, alt, title=HEADLINE, style=STYLE):
         return (f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
                 f'width="{W}" height="{H:.0f}" viewBox="0 0 {W} {H:.0f}" role="img" aria-label="{alt}">'
-                f'<title>{HEADLINE}</title><style>{STYLE}</style><defs>{GRAIN}{"".join(self.defs)}</defs>'
+                f'<title>{title}</title><style>{style}</style><defs>{GRAIN}{"".join(self.defs)}</defs>'
                 f'<rect width="{W}" height="{H:.0f}" fill="{UNDER_GRAIN}"/>'
                 f'<rect width="{W}" height="{H:.0f}" filter="url(#grain)"/>'
                 f'{"".join(self.marks)}</svg>')

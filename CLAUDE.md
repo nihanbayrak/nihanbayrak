@@ -25,6 +25,13 @@ Two printed pieces and some markdown, laid out under `ninu-design`
   rules held it there: body text never animates, nothing waits at opacity 0, no spring
   bounce. Reduced motion gets the line at rest.
 
+- **The cards.** `tools/cards.py` writes `assets/card-{1,2,3}{,-narrow}.svg`, one printed
+  label per job, each its own link: the object you choose (her §1d references), since a
+  click is the one thing a README allows. A manicule ☞ (Cormorant carries it) beside the
+  printed verb steps forward in the same clockwork as the headline. The proof sits under
+  each card in a `<details>` case file, the other thing a README allows: opening something.
+  Principles and colophon fold away the same way. Run it from `tools/` after `dance.py`.
+
 Nihan first asked for hover, then for the whole text to dance. A README cannot hover (no
 script, and pointer events never reach an image), and her own skill keeps body text still,
 so the display line carries the motion. The copy lives in `dance.py` and again in the
