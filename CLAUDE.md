@@ -10,9 +10,10 @@ Two printed pieces and some markdown, laid out under `ninu-design`
 - **Era:** `victorian-automaton-3d`, from the brass-and-enamel octopus automaton in her
   moodboard (`Screenshot 2026-08-27 at 11.25.54`), one built object on a cream ground with
   one soft shadow. The page under it borrows the 1922 Ladies' Home Journal page.
-- **The plate.** `tools/render.py` writes `assets/object.webp`: the octopus turning on grained
-  paper `#F5F1E8`, its shadow printed on the paper. No longer transparent: there is no dark
-  mode, there is a printed object on whatever GitHub's page is.
+- **The octopus.** `tools/render.py` writes `assets/object.webp`: the octopus turning, on a
+  transparent ground with the shadow in the alpha. It sat on grained paper for one round;
+  Nihan asked for it transparent again on 24 Oct, so it floats on GitHub's own page above
+  the paper sheet. `shade.turntable(background=True)` still paints the paper if wanted.
 - **The sheet.** `tools/dance.py` writes `assets/intro.svg` and `assets/intro-narrow.svg`
   (600 px and under, picked through `<picture>`): a ruled panel of small-caps facts, an
   oxblood hairline between columns, the headline, a deck, and body with a drop cap.

@@ -1,5 +1,5 @@
 <p>
-  <img src="assets/object.webp" width="100%" alt="A brass and bone enamel mechanical octopus automaton turning slowly on warm paper, green lenses for eyes, its shadow printed to the left">
+  <img src="assets/object.webp" width="100%" alt="A brass and bone enamel mechanical octopus automaton turning slowly on its axis, green lenses for eyes, its shadow pooling to the left">
 </p>
 
 <p>
@@ -82,7 +82,7 @@ material never touches an outside API.
 
 The octopus is a mesh, not a video: 37,327 triangles in 427 parts, rendered frame by frame
 in plain numpy with a depth buffer, smooth normals and the PBR materials lifted from the
-source model, its shadow printed onto the paper it stands on. The sheet under it is set like
+source model, then a shadow cast onto a floor that is not there. The sheet under it is set like
 a 1922 magazine page, and its headline ticks like the automaton above it: every letter steps
 up and back through held positions, because a README allows no script and no hover. Drawn by
 [`tools/render.py`](tools/render.py) and [`tools/dance.py`](tools/dance.py).

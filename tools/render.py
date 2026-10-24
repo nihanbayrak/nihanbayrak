@@ -31,7 +31,7 @@ def main():
     sh = shade.Shader(DATA / "nautilia-octopus.obj", DATA / "materials.json",
                       box=BOX, canvas=CANVAS, frames=FRAMES)
     out = ASSETS / "object.webp"
-    n = shade.turntable(sh, out, duration=MS, background=True)
+    n = shade.turntable(sh, out, duration=MS)
     print(f"  {out.name}  {n} frames  {out.stat().st_size/1024:.0f} KB")
 
 
