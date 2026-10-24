@@ -4,8 +4,18 @@ The `nihanbayrak/nihanbayrak` profile README — the page GitHub shows above her
 
 ## What this is
 
-One generated image and words. `tools/render.py` writes a single asset, `assets/object.webp`
-— the octopus, turning. Everything else on the page is markdown.
+Two generated images and words. `tools/render.py` writes `assets/object.webp`, the octopus
+turning. `tools/dance.py` writes `assets/care-light.svg` and `assets/care-dark.svg`, the line
+"Care is my building language." with every letter hopping in a wave; GitHub picks one per
+theme through `<picture>`. Everything else on the page is markdown.
+
+Nihan asked for the letters to dance on hover. A README cannot do that (no script, and
+pointer events never reach an image), so they dance on their own every five seconds and
+stand still under reduced motion. `dance.py` needs fonttools and uharfbuzz, which the
+workflow does not install, so the Action never calls it: run it by hand and commit both SVGs.
+
+**No dashes in the copy.** Nihan's rule from 24 Oct: no em or en dashes in the README, and
+avoid hyphenated words where a plain phrase works.
 
 Two rounds of cutting got it here. Until 27 Aug there were also a banner, a live ledger and
 six work cards drawn from the GitHub API and redrawn nightly; Nihan cut them. The object
