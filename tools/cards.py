@@ -13,8 +13,7 @@ README), which is the other thing a README lets a visitor do: open something.
 Run by hand with dance.py; same dependencies, same reasons.
 """
 import typeset
-from dance import (ASSETS, DISPLAY, FACT, FACT_BOLD, INK, READING, STRUCTURE, TRACK,
-                   Sheet)
+from dance import ASSETS, DISPLAY, FACT, FACT_BOLD, READING, THEMES, TRACK, Sheet
 
 CARDS = [
     dict(n="I", act="BUILD", role="AI SPECIALIST", title="Roundtrip",
@@ -53,18 +52,18 @@ STYLE = """
 def manicule(sh, x, y, size, delay):
     """The pointing hand, set in Cormorant, on its own clock."""
     uses, width = sh.glyphs("☞", DISPLAY, size, x, y)
-    sh.marks.append(f'<g class="m" fill="{STRUCTURE}" style="animation-delay:{delay:.2f}s">'
+    sh.marks.append(f'<g class="m" fill="{sh.structure}" style="animation-delay:{delay:.2f}s">'
                     f'{"".join(u for u, _ in uses)}</g>')
     return width
 
 
-def frame(sh, W, H, inset=9):
+def frame(sh, W, H, inset=1):
     sh.marks.append(f'<rect x="{inset}" y="{inset}" width="{W - 2 * inset}" height="{H - 2 * inset}" '
-                    f'fill="none" stroke="{INK}" stroke-width=".75"/>')
+                    f'fill="none" stroke="{sh.ink}" stroke-width=".75"/>')
 
 
-def build(card, L, delay):
-    sh = Sheet()
+def build(card, L, delay, ink, structure):
+    sh = Sheet(ink, structure)
     W, pad, f, fl = L["W"], L["pad"], L["fact"], L["fact_lead"]
 
     if W >= 600:
@@ -73,54 +72,54 @@ def build(card, L, delay):
         cx, right_x = rule_x + 26, W - pad - 190
         cw = right_x - 24 - cx
         y = pad + 14 + fl
-        w = sh.text(card["act"], FACT_BOLD, f, cx, y, STRUCTURE, TRACK)
-        sh.text(card["role"], FACT, f, cx + w + f, y, INK, TRACK)
+        w = sh.text(card["act"], FACT_BOLD, f, cx, y, sh.structure, TRACK)
+        sh.text(card["role"], FACT, f, cx + w + f, y, sh.ink, TRACK)
         y += L["title"] * 0.95
-        sh.text(card["title"], DISPLAY, L["title"], cx, y, INK)
+        sh.text(card["title"], DISPLAY, L["title"], cx, y, sh.ink)
         y += L["lead"] * 1.4
         for line in typeset.wrap(card["deck"], READING, L["deck"], cw):
-            sh.text(line, READING, L["deck"], cx, y, INK)
+            sh.text(line, READING, L["deck"], cx, y, sh.ink)
             y += L["lead"]
         H = max(y - L["lead"] + pad + 18, 168)
 
         num_w = typeset.measure(card["n"], DISPLAY, L["numeral"])
         sh.text(card["n"], DISPLAY, L["numeral"], rule_x - 22 - num_w, pad + 18 + L["numeral"] * 0.66,
-                STRUCTURE)
-        sh.rule(rule_x, pad + 6, rule_x, H - pad - 6, STRUCTURE, 1)
+                sh.structure)
+        sh.rule(rule_x, pad + 6, rule_x, H - pad - 6, sh.structure, 1)
 
         fx, fx1 = right_x, W - pad - 8
         y = pad + 14
-        sh.rule(fx, y, fx1, y, INK)
+        sh.rule(fx, y, fx1, y, sh.ink)
         for text in (card["stack"], card["status"]):
             for line in typeset.wrap(text, FACT, f - .5, fx1 - fx, TRACK):
                 y += fl
-                sh.text(line, FACT, f - .5, fx, y - 4, INK, TRACK)
+                sh.text(line, FACT, f - .5, fx, y - 4, sh.ink, TRACK)
             y += 7
-            sh.rule(fx, y, fx1, y, INK)
+            sh.rule(fx, y, fx1, y, sh.ink)
         vy = H - pad - 14
-        w = sh.text(card["verb"], FACT_BOLD, f, fx, vy, STRUCTURE, TRACK)
+        w = sh.text(card["verb"], FACT_BOLD, f, fx, vy, sh.structure, TRACK)
         manicule(sh, fx + w + 8, vy + 7, 34, delay)
     else:
         # Narrow: numeral and label on one line, then title, deck, facts, verb
         x0, x1 = pad + 8, W - pad - 8
         y = pad + 6 + L["numeral"] * 0.66
-        nw = sh.text(card["n"], DISPLAY, L["numeral"], x0, y, STRUCTURE)
+        nw = sh.text(card["n"], DISPLAY, L["numeral"], x0, y, sh.structure)
         ly = y - L["numeral"] * 0.66 + fl
-        sh.text(card["act"], FACT_BOLD, f, x0 + nw + 16, ly, STRUCTURE, TRACK)
-        sh.text(card["role"], FACT, f, x0 + nw + 16, ly + fl, INK, TRACK)
+        sh.text(card["act"], FACT_BOLD, f, x0 + nw + 16, ly, sh.structure, TRACK)
+        sh.text(card["role"], FACT, f, x0 + nw + 16, ly + fl, sh.ink, TRACK)
         y += 14 + L["title"] * 0.8
-        sh.text(card["title"], DISPLAY, L["title"], x0, y, INK)
+        sh.text(card["title"], DISPLAY, L["title"], x0, y, sh.ink)
         y += L["lead"] * 1.15
         for line in typeset.wrap(card["deck"], READING, L["deck"], x1 - x0):
-            sh.text(line, READING, L["deck"], x0, y, INK)
+            sh.text(line, READING, L["deck"], x0, y, sh.ink)
             y += L["lead"]
         y += 2
-        sh.rule(x0, y - 12, x1, y - 12, INK)
+        sh.rule(x0, y - 12, x1, y - 12, sh.ink)
         for line in typeset.wrap(f'{card["stack"]} · {card["status"]}', FACT, f - .5, x1 - x0, TRACK):
             y += fl - 4
-            sh.text(line, FACT, f - .5, x0, y, INK, TRACK)
+            sh.text(line, FACT, f - .5, x0, y, sh.ink, TRACK)
         y += 30
-        w = sh.text(card["verb"], FACT_BOLD, f, x0, y, STRUCTURE, TRACK)
+        w = sh.text(card["verb"], FACT_BOLD, f, x0, y, sh.structure, TRACK)
         manicule(sh, x0 + w + 8, y + 6, 28, delay)
         H = y + pad + 14
 
@@ -132,10 +131,11 @@ def build(card, L, delay):
 
 def main():
     for i, card in enumerate(CARDS, 1):
-        for cut, layout in LAYOUTS.items():
-            out = ASSETS / (f"card-{i}.svg" if cut == "wide" else f"card-{i}-narrow.svg")
-            out.write_text(build(card, layout, delay=.8 + i * .5))
-            print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
+        for theme, colours in THEMES.items():
+            for cut, layout in LAYOUTS.items():
+                out = ASSETS / (f"card-{i}-{theme}" + ("-narrow" if cut == "narrow" else "") + ".svg")
+                out.write_text(build(card, layout, delay=.8 + i * .5, **colours))
+                print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
 
 
 if __name__ == "__main__":

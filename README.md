@@ -3,10 +3,7 @@
 </p>
 
 <p>
-  <picture>
-    <source media="(max-width: 600px)" srcset="assets/intro-narrow.svg">
-    <img src="assets/intro.svg" width="100%" alt="Care is my building language. AI made building fast. Most people spend that speed on building more. I spend it on attention. The hours AI gives back, I put into planning: what we are making, why, and how we will know it worked. Then I track it, measure it and improve it. When the numbers say the system is wrong, I take the whole thing apart and rethink it, even when that is the uncomfortable thing to do. Especially then. I trust my taste, and I test it. Most people in this field have no visual vocabulary; most people with one cannot ship. I work in between. Nihan Bayrak. AI specialist, product manager, solutions engineer. Berlin. By day, WIN Creating Images.">
-  </picture>
+  <picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/intro-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/intro-dark.svg"><source media="(max-width: 600px)" srcset="assets/intro-light-narrow.svg"><img src="assets/intro-light.svg" width="100%" alt="Care is my building language. AI made building fast. Most people spend that speed on building more. I spend it on attention. The hours AI gives back, I put into planning: what we are making, why, and how we will know it worked. Then I track it, measure it and improve it. When the numbers say the system is wrong, I take the whole thing apart and rethink it, even when that is the uncomfortable thing to do. Especially then. I trust my taste, and I test it. Most people in this field have no visual vocabulary; most people with one cannot ship. I work in between. Nihan Bayrak. AI specialist, product manager, solutions engineer. Berlin. By day, WIN Creating Images."></picture>
 </p>
 
 <a href="https://www.linkedin.com/in/nihan-bayrak/">LinkedIn</a> · <a href="https://consciouseyes.app">consciouseyes.app</a>
@@ -15,7 +12,7 @@
 
 Three jobs, one person. Each card opens its own door, and the case file under it holds the proof.
 
-<a href="https://www.linkedin.com/in/nihan-bayrak/"><picture><source media="(max-width: 600px)" srcset="assets/card-1-narrow.svg"><img src="assets/card-1.svg" width="100%" alt="I. Build, AI specialist. Roundtrip. A tester's screenshot goes in. A located, triaged and fixed case comes out. Ask for a demo."></picture></a>
+<a href="https://www.linkedin.com/in/nihan-bayrak/"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-1-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-1-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-1-light-narrow.svg"><img src="assets/card-1-light.svg" width="100%" alt="I. Build, AI specialist. Roundtrip. A tester's screenshot goes in. A located, triaged and fixed case comes out. Ask for a demo."></picture></a>
 
 <details>
 <summary>☞ Case file I · Roundtrip</summary>
@@ -31,7 +28,7 @@ Eleven tester reports from Conscious Eyes have gone through it. All eleven are f
 
 </details>
 
-<a href="https://consciouseyes.app"><picture><source media="(max-width: 600px)" srcset="assets/card-2-narrow.svg"><img src="assets/card-2.svg" width="100%" alt="II. Ship, product manager. Conscious Eyes. A food and cosmetics scanner that never invents an ingredient. 627 tests stand behind that. Visit the site."></picture></a>
+<a href="https://consciouseyes.app"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-2-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-2-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-2-light-narrow.svg"><img src="assets/card-2-light.svg" width="100%" alt="II. Ship, product manager. Conscious Eyes. A food and cosmetics scanner that never invents an ingredient. 627 tests stand behind that. Visit the site."></picture></a>
 
 <details>
 <summary>☞ Case file II · Conscious Eyes</summary>
@@ -46,7 +43,7 @@ Store. 627 tests stand behind it.
 
 </details>
 
-<a href="https://github.com/nihanbayrak/Ollama_pipeline"><picture><source media="(max-width: 600px)" srcset="assets/card-3-narrow.svg"><img src="assets/card-3.svg" width="100%" alt="III. Translate, solutions engineer. Brief to Concept. A raw client packaging brief becomes a design brief, then a first concept image, on one machine. Open the code."></picture></a>
+<a href="https://github.com/nihanbayrak/Ollama_pipeline"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-3-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-3-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-3-light-narrow.svg"><img src="assets/card-3-light.svg" width="100%" alt="III. Translate, solutions engineer. Brief to Concept. A raw client packaging brief becomes a design brief, then a first concept image, on one machine. Open the code."></picture></a>
 
 <details>
 <summary>☞ Case file III · Brief to Concept</summary>

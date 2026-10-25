@@ -14,19 +14,23 @@ Two printed pieces and some markdown, laid out under `ninu-design`
   transparent ground with the shadow in the alpha. It sat on grained paper for one round;
   Nihan asked for it transparent again on 24 Oct, so it floats on GitHub's own page above
   the paper sheet. `shade.turntable(background=True)` still paints the paper if wanted.
-- **The sheet.** `tools/dance.py` writes `assets/intro.svg` and `assets/intro-narrow.svg`
-  (600 px and under, picked through `<picture>`): a ruled panel of small-caps facts, an
-  oxblood hairline between columns, the headline, a deck, and body with a drop cap.
-  Three values: paper, tobacco ink `#1A1611`, oxblood `#8B2027`. Cormorant Infant Light is
-  the character, Libre Baskerville does the reading, Archivo Narrow carries the facts. The
-  sheet's paper sits under a grain filter that darkens it by about 7, so its base is
-  `#FCF8EF`; it measures within 2 of the plate. Re-measure if you touch the grain.
+- **The sheet.** `tools/dance.py` writes `assets/intro-{light,dark}{,-narrow}.svg`: a ruled
+  panel of small-caps facts, an oxblood hairline between columns, the headline, a deck, and
+  body with a drop cap. Cormorant Infant Light is the character, Libre Baskerville does the
+  reading, Archivo Narrow carries the facts.
+- **Transparent, by her call on 25 Oct.** For one round the sheet and cards were printed on
+  grained paper `#F5F1E8`; she asked for everything to look transparent, so nothing on the
+  page has a ground of its own and the ink follows GitHub's theme. Light: tobacco
+  `#1A1611` and oxblood `#8B2027`. Dark: paper `#F0EBE0` and oxblood lifted to `#D25C64`.
+  Every image is a `<picture>` with four sources, dark and light by narrow (600 px and
+  under) and wide, the dark-and-narrow source first. This overrides ninu-design's printed
+  ground and grain for this page.
 - **Signature: clockwork.** Only the headline moves. Each letter steps up and back through
   held positions (`steps(1, end)`), and the step runs along the line like a cam. Her skill's
   rules held it there: body text never animates, nothing waits at opacity 0, no spring
   bounce. Reduced motion gets the line at rest.
 
-- **The cards.** `tools/cards.py` writes `assets/card-{1,2,3}{,-narrow}.svg`, one printed
+- **The cards.** `tools/cards.py` writes `assets/card-{1,2,3}-{light,dark}{,-narrow}.svg`, one
   label per job, each its own link: the object you choose (her §1d references), since a
   click is the one thing a README allows. A manicule ☞ (Cormorant carries it) beside the
   printed verb steps forward in the same clockwork as the headline. The proof sits under

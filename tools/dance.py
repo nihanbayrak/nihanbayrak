@@ -33,9 +33,12 @@ import typeset
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 
-GROUND, INK, STRUCTURE = "#F5F1E8", "#1A1611", "#8B2027"
-UNDER_GRAIN = "#FCF8EF"                # the grain darkens by ~7 on average; this lands it
-                                       # on GROUND, the same paper the octopus plate is printed on
+# No ground of its own: the sheet is transparent and sits on GitHub's page, so the
+# ink follows the theme. GitHub picks the file per theme through <picture>.
+THEMES = {
+    "light": dict(ink="#1A1611", structure="#8B2027"),     # tobacco, oxblood
+    "dark": dict(ink="#F0EBE0", structure="#D25C64"),      # paper, oxblood lifted for the dark
+}
 
 HEADLINE = "Care is my building language."
 ACCENT_WORD = "Care"
@@ -57,9 +60,9 @@ DISPLAY, READING, FACT, FACT_BOLD = "display", "body", "fact", "fact_bold"
 TRACK = 0.1                            # small caps get air; body never does
 
 LAYOUTS = {
-    "wide": dict(W=800, pad=52, panel=164, gutter=24, head=60, deck=23, deck_lead=31,
+    "wide": dict(W=800, pad=2, top=22, panel=164, gutter=24, head=60, deck=23, deck_lead=31,
                  body=15.5, lead=26, fact=11.5, fact_lead=18),
-    "narrow": dict(W=380, pad=24, panel=None, gutter=0, head=46, deck=20, deck_lead=27,
+    "narrow": dict(W=380, pad=2, top=22, panel=None, gutter=0, head=46, deck=20, deck_lead=27,
                    body=14.5, lead=24, fact=11, fact_lead=17),
 }
 
@@ -85,15 +88,12 @@ STYLE = f"""
 @media (prefers-reduced-motion: reduce) {{ .t {{ animation: none; }} }}
 """
 
-GRAIN = ('<filter id="grain" x="0" y="0" width="100%" height="100%">'
-         '<feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" stitchTiles="stitch"/>'
-         '<feColorMatrix values="0 0 0 0 .10  0 0 0 0 .086  0 0 0 0 .067  .22 0 0 0 -.07"/></filter>')
-
 
 class Sheet:
     """Outlines placed on a page. Every glyph is drawn once and reused."""
 
-    def __init__(self):
+    def __init__(self, ink, structure):
+        self.ink, self.structure = ink, structure
         self.ids, self.defs, self.marks = {}, [], []
 
     def _ref(self, face, name):
@@ -136,9 +136,7 @@ class Sheet:
     def svg(self, W, H, alt, title=HEADLINE, style=STYLE):
         return (f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
                 f'width="{W}" height="{H:.0f}" viewBox="0 0 {W} {H:.0f}" role="img" aria-label="{alt}">'
-                f'<title>{title}</title><style>{style}</style><defs>{GRAIN}{"".join(self.defs)}</defs>'
-                f'<rect width="{W}" height="{H:.0f}" fill="{UNDER_GRAIN}"/>'
-                f'<rect width="{W}" height="{H:.0f}" filter="url(#grain)"/>'
+                f'<title>{title}</title><style>{style}</style><defs>{"".join(self.defs)}</defs>'
                 f'{"".join(self.marks)}</svg>')
 
 
@@ -167,7 +165,7 @@ def headline(sh, x, y, width, size):
         _, _, _, upem = typeset._load(DISPLAY)
         for i in range(len(typeset.shape(line, DISPLAY)[0])):
             if i in drawn:
-                fill = STRUCTURE if letter < len(ACCENT_WORD) else INK
+                fill = sh.structure if letter < len(ACCENT_WORD) else sh.ink
                 side = " r" if letter % 2 else ""
                 sh.marks.append(f'<g class="t{side}" fill="{fill}" '
                                 f'style="animation-delay:{.3 + letter * STEP:.2f}s">{drawn[i]}</g>')
@@ -179,7 +177,7 @@ def headline(sh, x, y, width, size):
 def prose(sh, L, x, y, width):
     """Deck, then body with a drop cap. Returns the last baseline."""
     for line in typeset.wrap(DECK, DISPLAY, L["deck"], width):
-        sh.text(line, DISPLAY, L["deck"], x, y, INK)
+        sh.text(line, DISPLAY, L["deck"], x, y, sh.ink)
         y += L["deck_lead"]
     y += L["lead"] * 0.55
 
@@ -190,76 +188,76 @@ def prose(sh, L, x, y, width):
             cap_px = 2 * lead + 0.77 * body
             cap_size = cap_px / 0.625
             cap_w = typeset.measure(para[0], DISPLAY, cap_size)
-            sh.text(para[0], DISPLAY, cap_size, x - cap_size * 0.02, y + 2 * lead, STRUCTURE)
+            sh.text(para[0], DISPLAY, cap_size, x - cap_size * 0.02, y + 2 * lead, sh.structure)
             indent = cap_w + body * 0.45
             lines = _wrap_varying(para[1:].split(), READING, body,
                                   lambda n: width - indent if n < 3 else width)
             for n, line in enumerate(lines):
-                sh.text(line, READING, body, x + (indent if n < 3 else 0), y, INK)
+                sh.text(line, READING, body, x + (indent if n < 3 else 0), y, sh.ink)
                 y += lead
         else:
             y += lead * 0.45
             for line in typeset.wrap(para, READING, body, width):
-                sh.text(line, READING, body, x, y, INK)
+                sh.text(line, READING, body, x, y, sh.ink)
                 y += lead
     return y - lead
 
 
-def build(L):
-    sh = Sheet()
-    W, pad, f, fl = L["W"], L["pad"], L["fact"], L["fact_lead"]
+def build(L, ink, structure):
+    sh = Sheet(ink, structure)
+    W, pad, top, f, fl = L["W"], L["pad"], L["top"], L["fact"], L["fact_lead"]
 
     if L["panel"]:
         # Ruled panel on the left, every fact in its own cell.
         px0, px1 = pad, pad + L["panel"]
-        cells = [[(NAME, FACT_BOLD, INK)],
-                 [(r, FACT, INK) for r in ROLES],
-                 [(PLACE, FACT, INK)],
-                 [(DAY_LABEL, FACT, STRUCTURE), (DAY, FACT, INK)]]
-        y = pad
-        sh.rule(px0, y, px1, y, INK)
+        cells = [[(NAME, FACT_BOLD, sh.ink)],
+                 [(r, FACT, sh.ink) for r in ROLES],
+                 [(PLACE, FACT, sh.ink)],
+                 [(DAY_LABEL, FACT, sh.structure), (DAY, FACT, sh.ink)]]
+        y = top
+        sh.rule(px0, y, px1, y, sh.ink)
         for cell in cells:
             y += 7
             for text, face, colour in cell:
                 y += fl
                 sh.text(text, face, f, px0, y - 5, colour, TRACK)
             y += 9
-            sh.rule(px0, y, px1, y, INK)
+            sh.rule(px0, y, px1, y, sh.ink)
         panel_bottom = y
         rx = px1 + L["gutter"]
         cx = rx + L["gutter"]
         width = W - pad - cx
-        y = pad + L["head"] * 0.72
+        y = top + L["head"] * 0.72
         y = headline(sh, cx, y, width, L["head"])
         y = prose(sh, L, cx, y + L["head"] * 0.86, width)
         bottom = max(y + L["lead"] * 0.4, panel_bottom)
-        sh.rule(rx, pad, rx, bottom, STRUCTURE, 1)
-        H = bottom + pad
+        sh.rule(rx, top, rx, bottom, sh.structure, 1)
+        H = bottom + top
     else:
         # Narrow: the panel becomes ruled strips across the top.
         x0, x1 = pad, W - pad
-        y = pad
-        sh.rule(x0, y, x1, y, INK)
+        y = top
+        sh.rule(x0, y, x1, y, sh.ink)
         y += 7 + fl
-        sh.text(NAME, FACT_BOLD, f, x0, y - 5, INK, TRACK)
-        sh.text(PLACE, FACT, f, x1, y - 5, INK, TRACK, anchor="end")
+        sh.text(NAME, FACT_BOLD, f, x0, y - 5, sh.ink, TRACK)
+        sh.text(PLACE, FACT, f, x1, y - 5, sh.ink, TRACK, anchor="end")
         y += 9
-        sh.rule(x0, y, x1, y, INK)
+        sh.rule(x0, y, x1, y, sh.ink)
         y += 7
         for line in typeset.wrap(" · ".join(ROLES), FACT, f, x1 - x0, TRACK):
             y += fl
-            sh.text(line, FACT, f, x0, y - 5, INK, TRACK)
+            sh.text(line, FACT, f, x0, y - 5, sh.ink, TRACK)
         y += 9
-        sh.rule(x0, y, x1, y, INK)
+        sh.rule(x0, y, x1, y, sh.ink)
         y += 7 + fl
-        w = sh.text(DAY_LABEL, FACT, f, x0, y - 5, STRUCTURE, TRACK)
-        sh.text(DAY, FACT, f, x0 + w + f * 0.8, y - 5, INK, TRACK)
+        w = sh.text(DAY_LABEL, FACT, f, x0, y - 5, sh.structure, TRACK)
+        sh.text(DAY, FACT, f, x0 + w + f * 0.8, y - 5, sh.ink, TRACK)
         y += 9
-        sh.rule(x0, y, x1, y, STRUCTURE, 1)
+        sh.rule(x0, y, x1, y, sh.structure, 1)
         y += 18 + L["head"] * 0.72
         y = headline(sh, x0, y, x1 - x0, L["head"])
         y = prose(sh, L, x0, y + L["head"] * 0.86, x1 - x0)
-        H = y + pad
+        H = y + top
 
     alt = " ".join([HEADLINE, DECK] + BODY + [
         "Nihan Bayrak. AI specialist, product manager, solutions engineer. Berlin. "
@@ -269,10 +267,11 @@ def build(L):
 
 def main():
     ASSETS.mkdir(exist_ok=True)
-    for cut, layout in LAYOUTS.items():
-        out = ASSETS / ("intro.svg" if cut == "wide" else "intro-narrow.svg")
-        out.write_text(build(layout))
-        print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
+    for theme, colours in THEMES.items():
+        for cut, layout in LAYOUTS.items():
+            out = ASSETS / (f"intro-{theme}" + ("-narrow" if cut == "narrow" else "") + ".svg")
+            out.write_text(build(layout, **colours))
+            print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
 
 
 if __name__ == "__main__":
