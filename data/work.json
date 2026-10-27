@@ -89,10 +89,10 @@
       "title": "This Page",
       "kind": "Self-typesetting",
       "status": "Nightly",
-      "blurb": "Every image here is drawn by a script from the live API, typeset in outlines, and animated on load.",
+      "blurb": "A 3D mesh rasterised and then cut as hatch lines, turning in a document that allows no JavaScript.",
       "stack": [
         "Python",
-        "HarfBuzz",
+        "numpy",
         "fontTools",
         "Actions"
       ],

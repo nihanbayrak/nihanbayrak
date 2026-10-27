@@ -1,74 +1,87 @@
-![Nihan Bayrak — AI Specialist, Berlin](assets/banner.svg)
+<p>
+  <img src="assets/object.webp" width="100%" alt="A brass and bone enamel mechanical octopus automaton turning slowly on its axis, green lenses for eyes, its shadow pooling to the left">
+</p>
 
-<table>
-<tr>
-<td width="38%" valign="top">
-<img src="assets/object.svg" width="100%" alt="An engraved octopus turning on its axis, its eye lenses printed in oxblood">
-</td>
-<td width="62%" valign="top">
+<p>
+  <picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/intro-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/intro-dark.svg"><source media="(max-width: 600px)" srcset="assets/intro-light-narrow.svg"><img src="assets/intro-light.svg" width="100%" alt="Care is my building language. AI made building fast. Most people spend that speed on building more. I spend it on attention. The hours AI gives back, I put into planning: what we are making, why, and how we will know it worked. Then I track it, measure it and improve it. When the numbers say the system is wrong, I take the whole thing apart and rethink it, even when that is the uncomfortable thing to do. Especially then. I trust my taste, and I test it. Most people in this field have no visual vocabulary; most people with one cannot ship. I work in between. Nihan Bayrak. AI specialist, product manager, solutions engineer. Berlin. By day, WIN Creating Images."></picture>
+</p>
 
-I build AI systems at a creative packaging agency in Berlin, and I care what they
-look like when they are finished. Most people in this field have no visual
-vocabulary. Most people with a visual vocabulary cannot ship. The interesting
-work is in between.
+<a href="https://www.linkedin.com/in/nihan-bayrak/">LinkedIn</a> · <a href="https://consciouseyes.app">consciouseyes.app</a>
 
-Turkish, English, German, and enough French to be dangerous.
+## Pick a card
 
-The thing on the left is a real mesh, turning — twelve thousand triangles, lit and
-rasterised here, then cut as line work the way a copperplate plate is cut.
+Three jobs, one person. Each card opens its own door, and the case file under it holds the proof.
 
-</td>
-</tr>
-</table>
+<a href="https://www.linkedin.com/in/nihan-bayrak/"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-1-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-1-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-1-light-narrow.svg"><img src="assets/card-1-light.svg" width="100%" alt="I. Build, AI specialist. Roundtrip. A tester's screenshot goes in. A located, triaged and fixed case comes out. Ask for a demo."></picture></a>
 
-![](assets/ledger.svg)
+<details>
+<summary>☞ Case file I · Roundtrip</summary>
+<br>
 
-## Selected work
+A beta tester sends a screenshot and four words: *"It doesn't work."* Roundtrip reads the
+screenshot to work out what they were trying to do, finds that screen in the code, and
+decides whether it is a bug to fix or a call for a person to make. Bugs go to a coding
+agent, and the next build's release note is drafted to tell the tester theirs was fixed.
+Eleven tester reports from Conscious Eyes have gone through it. All eleven are fixed.
 
-<table>
-<tr>
-<td width="50%"><a href="https://github.com/nihanbayrak/Ollama_pipeline"><img src="assets/work-01.svg" alt="Brief to Concept, Locally — DSPy, LangGraph, Ollama"></a></td>
-<td width="50%"><a href="https://github.com/nihanbayrak/editorial-photo-app"><img src="assets/work-02.svg" alt="Editorial Photo Generator — Gemini"></a></td>
-</tr>
-<tr>
-<td width="50%"><a href="https://github.com/nihanbayrak/conscious-legal"><img src="assets/work-03.svg" alt="Conscious — an iOS scanner for food and cosmetics"></a></td>
-<td width="50%"><a href="https://github.com/nihanbayrak/ojin-avatar-app"><img src="assets/work-04.svg" alt="Ojin Avatar Agent — real-time lip-synced avatar"></a></td>
-</tr>
-<tr>
-<td width="50%"><a href="https://github.com/nihanbayrak/soul-faceswap-generator"><img src="assets/work-05.svg" alt="Soul and Face Swap — Higgsfield and WaveSpeed"></a></td>
-<td width="50%"><a href="https://github.com/nihanbayrak/nihanbayrak"><img src="assets/work-06.svg" alt="This page, which typesets itself"></a></td>
-</tr>
-</table>
+`Claude · Claude Code · App Store Connect API · Node` · private repository, demo on request
 
-## About this page
+</details>
 
-Nothing here is a badge service. Every image is drawn by
-[`tools/render.py`](tools/render.py) from the live GitHub API and redrawn nightly
-by [a workflow](.github/workflows/refresh.yml).
+<a href="https://consciouseyes.app"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-2-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-2-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-2-light-narrow.svg"><img src="assets/card-2-light.svg" width="100%" alt="II. Ship, product manager. Conscious Eyes. A food and cosmetics scanner that never invents an ingredient. 627 tests stand behind that. Visit the site."></picture></a>
 
-GitHub renders README images inside `<img>`, which blocks webfont loading — so the
-type is not type. HarfBuzz shapes each line and fontTools converts the glyphs to
-outlines, which is why Cormorant Infant and Archivo Narrow survive the trip
-intact. The copy and the project list live in
-[`data/profile.toml`](data/profile.toml); the layout measures itself against real
-glyph widths rather than guessing.
+<details>
+<summary>☞ Case file II · Conscious Eyes</summary>
+<br>
 
-A README cannot be interactive — there is no JavaScript, and pointer events never
-reach an image. Motion is the part that survives, so every piece animates on load:
-the rules draw, the name rises, the figures tick into place, and the six cards
-below deal themselves out in sequence.
+When it does not know, it says so: an empty record reads *not found*, and a grade built
+from ingredients alone says the nutrition is unknown. I wrote the spec, including what it
+refuses to do, ran it through TestFlight with real testers, and submitted it to the App
+Store. 627 tests stand behind it.
 
-The octopus is the same constraint taken further. There is no WebGL either, so its
-turn is a zoetrope: forty orthographic projections cycled by CSS. Each one is
-rasterised properly — z-buffer, one lamp — and the tone that comes out is then cut
-as hatching, parallel lines at a fixed angle whose *weight* carries the shading
-rather than their spacing. Forty frames of flat-shaded polygons would have run to
-megabytes and looked like a screensaver; this way the file scales with the number
-of lines, not with the mesh. The hatching belongs to the plate and not to the
-object, so it holds still while the animal turns.
+`React Native · TypeScript · Expo` · [consciouseyes.app](https://consciouseyes.app)
 
-Warm paper, near-black type, one oxblood mark. Paper grain on every surface.
+</details>
 
-## Elsewhere
+<a href="https://github.com/nihanbayrak/Ollama_pipeline"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-3-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-3-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-3-light-narrow.svg"><img src="assets/card-3-light.svg" width="100%" alt="III. Translate, solutions engineer. Brief to Concept. A raw client packaging brief becomes a design brief, then a first concept image, on one machine. Open the code."></picture></a>
 
-[LinkedIn](https://www.linkedin.com/in/nihan-bayrak/) · Berlin, CET
+<details>
+<summary>☞ Case file III · Brief to Concept</summary>
+<br>
+
+The agency's problem, solved where the agency can trust it. A raw client packaging brief
+becomes a structured design brief, then a first concept image, on one machine. Client
+material never touches an outside API.
+
+`DSPy · LangGraph · Ollama · Python` · [the repository](https://github.com/nihanbayrak/Ollama_pipeline)
+
+</details>
+
+<br>
+
+<details>
+<summary>☞ What I hold to</summary>
+<br>
+
+- **Untrusted text is data.** A tester's words go into Roundtrip as evidence, never as
+  instructions. Text written at an AI is quarantined, not obeyed.
+- **No match, no trust.** When a model reads a screenshot, the text it claims to see on
+  screen is searched for in the source. If it is not there, the reading does not drive a fix.
+- **Measure taste instead of assuming it.** I preregistered a test of LAION's aesthetic
+  predictor against my own design references. It scored 39 of 52 below 5 out of 10, and
+  had no relation to how I rated them (ρ = −0.02). The full story is coming on Substack.
+
+</details>
+
+<details>
+<summary>☞ How this page is made</summary>
+<br>
+
+The octopus is a mesh, not a video: 37,327 triangles in 427 parts, rendered frame by frame
+in plain numpy with a depth buffer, smooth normals and the PBR materials lifted from the
+source model, then a shadow cast onto a floor that is not there. The sheet under it is set like
+a 1922 magazine page, and its headline ticks like the automaton above it: every letter steps
+up and back through held positions, because a README allows no script and no hover. Drawn by
+[`tools/render.py`](tools/render.py) and [`tools/dance.py`](tools/dance.py).
+
+</details>
