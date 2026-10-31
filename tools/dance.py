@@ -42,15 +42,13 @@ THEMES = {
 
 HEADLINE = "Care is my building language."
 ACCENT_WORD = "Care"
-DECK = ("AI made building fast. Most people spend that speed on building more. "
-        "I spend it on attention.")
+DECK = ("Writing code is becoming the easy part; deciding what to build, and why, is now "
+        "the bottleneck.")
 BODY = [
-    "The hours AI gives back, I put into planning: what we are making, why, and how we "
-    "will know it worked. Then I track it, measure it and improve it. When the numbers "
-    "say the system is wrong, I take the whole thing apart and rethink it, even when "
-    "that is the uncomfortable thing to do. Especially then.",
-    "I trust my taste, and I test it. Most people in this field have no visual "
-    "vocabulary; most people with one cannot ship. I work in between.",
+    "The time AI gives back, I spend on judgment: a clear spec before the build, a measure "
+    "of whether it worked after, and the honesty to rethink the whole system when the "
+    "numbers say it is wrong. The models are getting better quickly, which makes taste and "
+    "care more valuable, not less.",
 ]
 NAME, PLACE = "NIHAN BAYRAK", "BERLIN"
 ROLES = ["AI SPECIALIST", "PRODUCT MANAGER", "SOLUTIONS ENGINEER"]
