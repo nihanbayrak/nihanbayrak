@@ -26,6 +26,8 @@ Needs fonttools and uharfbuzz, which the workflow does not install, so the
 Action never calls this. Run it by hand and commit both SVGs. The README's alt
 text repeats this copy; change both together.
 """
+import math
+import random
 from pathlib import Path
 
 import typeset
@@ -33,11 +35,12 @@ import typeset
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 
-# No ground of its own: the sheet is transparent and sits on GitHub's page, so the
-# ink follows the theme. GitHub picks the file per theme through <picture>.
+# Yves Klein: International Klein Blue as the ground, white type, and gold, the
+# third of his colours and the brass of the octopus, as the one accent. Every
+# piece carries its own ground now, so one version serves both GitHub themes.
+GROUND = "#002FA7"
 THEMES = {
-    "light": dict(ink="#1A1611", structure="#8B2027"),     # tobacco, oxblood
-    "dark": dict(ink="#F0EBE0", structure="#D25C64"),      # paper, oxblood lifted for the dark
+    "klein": dict(ink="#FFFFFF", structure="#D9B44A"),
 }
 
 HEADLINE = "Care is my building language."
@@ -58,9 +61,9 @@ DISPLAY, READING, FACT, FACT_BOLD = "display", "body", "fact", "fact_bold"
 TRACK = 0.1                            # small caps get air; body never does
 
 LAYOUTS = {
-    "wide": dict(W=800, pad=2, top=22, panel=164, gutter=24, head=60, deck=23, deck_lead=31,
+    "wide": dict(W=800, pad=44, top=44, panel=164, gutter=24, head=60, deck=23, deck_lead=31,
                  body=15.5, lead=26, fact=11.5, fact_lead=18),
-    "narrow": dict(W=380, pad=2, top=22, panel=None, gutter=0, head=46, deck=20, deck_lead=27,
+    "narrow": dict(W=380, pad=22, top=28, panel=None, gutter=0, head=46, deck=20, deck_lead=27,
                    body=14.5, lead=24, fact=11, fact_lead=17),
 }
 
@@ -87,11 +90,76 @@ STYLE = f"""
 """
 
 
+# ---------------------------------------------------------------- the kaleidoscope
+
+SEGMENTS, PIECES = 12, 56
+WEDGE = math.tau / SEGMENTS
+
+
+def _rand(i, k):
+    return random.Random(f"{i}:{k}").random()
+
+
+def kaleidoscope(W, H, cx, cy):
+    """Yao's kaleidoscope, in SVG: hexagram bars and square-holed coins laid in one
+    30 degree wedge and mirrored twelve times. The tube turns slowly and the pieces
+    drift inside the mirrors, so every piece meets its reflection as it moves.
+    Tones of the ground's own blue, plus a little gold and white, quiet enough that
+    the words lead. Returns (defs, body)."""
+    R = math.hypot(max(cx, W - cx), max(cy, H - cy)) * 1.05
+    unit = R * 0.32
+    tones = [("#1B4DC7", .8), ("#D9B44A", .16), ("#FFFFFF", .07)]
+    pieces = []
+    for i in range(PIECES):
+        coin = i % 5 == 0
+        r = (0.04 + _rand(i, 1) * 0.96) * R * 0.7
+        a = (_rand(i, 2) * 1.8 - 0.4) * WEDGE      # wider than the mirror: no empty edge
+        grow = 0.45 + (r / R) * 1.2
+        w = (unit * (0.08 + _rand(i, 3) * 0.1) if coin else unit * (0.16 + _rand(i, 3) * 0.4)) * grow
+        h = w if coin else unit * (0.035 + _rand(i, 4) * 0.035) * grow
+        x, y, rot = math.cos(a) * r, math.sin(a) * r, math.degrees(_rand(i, 5) * math.pi)
+        colour, alpha = tones[i % 3]
+        at = f'transform="translate({x:.1f} {y:.1f}) rotate({rot:.1f})" fill="{colour}" fill-opacity="{alpha}"'
+        if coin:
+            hole = w * 0.28
+            pieces.append(f'<path fill-rule="evenodd" {at} d="M{-w / 2:.1f} 0a{w / 2:.1f} {w / 2:.1f} 0 1 0 {w:.1f} 0'
+                          f'a{w / 2:.1f} {w / 2:.1f} 0 1 0 {-w:.1f} 0Z M{-hole / 2:.1f} {-hole / 2:.1f}h{hole:.1f}v{hole:.1f}'
+                          f'h{-hole:.1f}Z"/>')
+        else:
+            pieces.append(f'<rect {at} x="{-w / 2:.1f}" y="{-h / 2:.1f}" width="{w:.1f}" height="{h:.1f}" '
+                          f'rx="{h / 2.5:.1f}"/>')
+    tip = R * 1.1
+    wedge = (f'<clipPath id="kw" clipPathUnits="userSpaceOnUse"><path d="M0 0L{tip:.0f} 0'
+             f'L{tip * math.cos(WEDGE):.0f} {tip * math.sin(WEDGE):.0f}Z"/></clipPath>')
+    defs = wedge + f'<g id="kp">{"".join(pieces)}</g>'
+    mirrors = []
+    for i in range(SEGMENTS):
+        # Odd segments are mirror images, as in Yao.
+        if i % 2 == 0:
+            turn = f"rotate({math.degrees(i * WEDGE):.0f})"
+        else:
+            turn = f"rotate({math.degrees((i + 1) * WEDGE):.0f}) scale(1 -1)"
+        mirrors.append(f'<g transform="{turn}"><g clip-path="url(#kw)"><g class="kd">'
+                       f'<use xlink:href="#kp"/></g></g></g>')
+    body = f'<g transform="translate({cx:.0f} {cy:.0f})"><g class="ks">{"".join(mirrors)}</g></g>'
+    return defs, body
+
+
+KALEIDOSCOPE_STYLE = """
+.ks { animation: tube 140s linear infinite; }
+.kd { animation: drift 16s ease-in-out infinite alternate; }
+@keyframes tube { to { transform: rotate(360deg); } }
+@keyframes drift { from { transform: none; } to { transform: translate(22px, 14px) rotate(7deg); } }
+@media (prefers-reduced-motion: reduce) { .ks, .kd { animation: none; } }
+"""
+
+
 class Sheet:
     """Outlines placed on a page. Every glyph is drawn once and reused."""
 
     def __init__(self, ink, structure):
         self.ink, self.structure = ink, structure
+        self.under = ""                              # on the ground, under everything else
         self.ids, self.defs, self.marks = {}, [], []
 
     def _ref(self, face, name):
@@ -135,6 +203,7 @@ class Sheet:
         return (f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
                 f'width="{W}" height="{H:.0f}" viewBox="0 0 {W} {H:.0f}" role="img" aria-label="{alt}">'
                 f'<title>{title}</title><style>{style}</style><defs>{"".join(self.defs)}</defs>'
+                f'<rect width="{W}" height="{H:.0f}" fill="{GROUND}"/>{self.under}'
                 f'{"".join(self.marks)}</svg>')
 
 
@@ -257,17 +326,19 @@ def build(L, ink, structure):
         y = prose(sh, L, x0, y + L["head"] * 0.86, x1 - x0)
         H = y + top
 
+    kdefs, sh.under = kaleidoscope(W, H, W * (0.62 if L["panel"] else 0.5), H * 0.5)
+    sh.defs.insert(0, kdefs)
     alt = " ".join([HEADLINE, DECK] + BODY + [
         "Nihan Bayrak. AI specialist, product manager, solutions engineer. Berlin. "
         "By day, WIN Creating Images."])
-    return sh.svg(W, H, alt)
+    return sh.svg(W, H, alt, style=STYLE + KALEIDOSCOPE_STYLE)
 
 
 def main():
     ASSETS.mkdir(exist_ok=True)
     for theme, colours in THEMES.items():
         for cut, layout in LAYOUTS.items():
-            out = ASSETS / (f"intro-{theme}" + ("-narrow" if cut == "narrow" else "") + ".svg")
+            out = ASSETS / ("intro" + ("-narrow" if cut == "narrow" else "") + ".svg")
             out.write_text(build(layout, **colours))
             print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
 

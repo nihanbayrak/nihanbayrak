@@ -181,7 +181,7 @@ def build(cal, layout, ink, structure):
     cy = ly + 22
     w = sh.text(total, FACT_BOLD, f + 1, left, cy, structure, TRACK)
     sh.text("CONTRIBUTIONS IN THE LAST YEAR, EATEN AND GROWN BACK", FACT, f, left + w + 7, cy, ink, TRACK)
-    H = cy + 14
+    H = cy + 24
 
     alt = (f'Contribution graph: {cal["total"]} contributions in the last year. A small brass '
            f'octopus walks across it week by week and eats each day\'s dot; the dots grow back.')
@@ -195,7 +195,7 @@ def main():
     cal = json.loads(DATA.read_text())
     for theme, colours in THEMES.items():
         for cut, layout in LAYOUTS.items():
-            out = ASSETS / (f"commits-{theme}" + ("-narrow" if cut == "narrow" else "") + ".svg")
+            out = ASSETS / ("commits" + ("-narrow" if cut == "narrow" else "") + ".svg")
             out.write_text(build(cal, layout, **colours))
             print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
 

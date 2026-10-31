@@ -57,7 +57,7 @@ def manicule(sh, x, y, size, delay):
     return width
 
 
-def frame(sh, W, H, inset=1):
+def frame(sh, W, H, inset=8):
     sh.marks.append(f'<rect x="{inset}" y="{inset}" width="{W - 2 * inset}" height="{H - 2 * inset}" '
                     f'fill="none" stroke="{sh.ink}" stroke-width=".75"/>')
 
@@ -133,7 +133,7 @@ def main():
     for i, card in enumerate(CARDS, 1):
         for theme, colours in THEMES.items():
             for cut, layout in LAYOUTS.items():
-                out = ASSETS / (f"card-{i}-{theme}" + ("-narrow" if cut == "narrow" else "") + ".svg")
+                out = ASSETS / (f"card-{i}" + ("-narrow" if cut == "narrow" else "") + ".svg")
                 out.write_text(build(card, layout, delay=.8 + i * .5, **colours))
                 print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
 

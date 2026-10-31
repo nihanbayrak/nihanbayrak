@@ -14,23 +14,21 @@ Two printed pieces and some markdown, laid out under `ninu-design`
   transparent ground with the shadow in the alpha. It sat on grained paper for one round;
   Nihan asked for it transparent again on 24 Oct, so it floats on GitHub's own page above
   the paper sheet. `shade.turntable(background=True)` still paints the paper if wanted.
-- **The sheet.** `tools/dance.py` writes `assets/intro-{light,dark}{,-narrow}.svg`: a ruled
-  panel of small-caps facts, an oxblood hairline between columns, the headline, a deck, and
-  body with a drop cap. Cormorant Infant Light is the character, Libre Baskerville does the
-  reading, Archivo Narrow carries the facts.
-- **Transparent, by her call on 25 Oct.** For one round the sheet and cards were printed on
-  grained paper `#F5F1E8`; she asked for everything to look transparent, so nothing on the
-  page has a ground of its own and the ink follows GitHub's theme. Light: tobacco
-  `#1A1611` and oxblood `#8B2027`. Dark: paper `#F0EBE0` and oxblood lifted to `#D25C64`.
-  Every image is a `<picture>` with four sources, dark and light by narrow (600 px and
-  under) and wide, the dark-and-narrow source first. This overrides ninu-design's printed
-  ground and grain for this page.
-- **Signature: clockwork.** Only the headline moves. Each letter steps up and back through
-  held positions (`steps(1, end)`), and the step runs along the line like a cam. Her skill's
-  rules held it there: body text never animates, nothing waits at opacity 0, no spring
-  bounce. Reduced motion gets the line at rest.
-
-- **The cards.** `tools/cards.py` writes `assets/card-{1,2,3}-{light,dark}{,-narrow}.svg`, one
+- **The sheet.** `tools/dance.py` writes `assets/intro{,-narrow}.svg`: a ruled panel of
+  small-caps facts, a gold hairline between columns, the headline, a deck, and body with a
+  drop cap. Cormorant Infant Light is the character, Libre Baskerville does the reading,
+  Archivo Narrow carries the facts. The copy is four sentences (1 Nov), written in the
+  register of Andrew Ng and Dario Amodei at her request: judgment is the bottleneck now.
+- **Klein, by her call on 1 Nov.** Every piece is printed on International Klein Blue
+  `#002FA7` with white type and one gold accent `#D9B44A` (Klein's third colour, and the
+  octopus's brass). With its own ground, each piece needs no light or dark version: one
+  file per width, `<picture>` picks the narrow cut at 600 px and under. Before this the
+  pieces were transparent with theme inks (25 Oct), and before that printed on paper.
+- **The kaleidoscope** behind the intro is Yao's (`~/claude_workspace/yao/src/ui/Kaleidoscope.tsx`)
+  ported to SVG: 56 bars and square-holed coins in one 30 degree wedge, clipped and mirrored
+  twelve times with `<use>`, the tube turning in 140 s and the pieces drifting in 16 s.
+  Tones of the ground's own blue plus faint gold and white, so the words lead.
+- **The cards.** `tools/cards.py` writes `assets/card-{1,2,3}{,-narrow}.svg`, one
   label per job, each its own link: the object you choose (her §1d references), since a
   click is the one thing a README allows. A manicule ☞ (Cormorant carries it) beside the
   printed verb steps forward in the same clockwork as the headline. The proof sits under
@@ -39,7 +37,7 @@ Two printed pieces and some markdown, laid out under `ninu-design`
 
 - **The year, eaten.** `tools/commits.py` fetches the contribution calendar (the
   workflow's `GITHUB_TOKEN` at night, the `gh` CLI by hand, so no token touches this
-  repo), keeps it in `data/contributions.json`, and writes `assets/commits-{light,dark}{,-narrow}.svg`:
+  repo), keeps it in `data/contributions.json`, and writes `assets/commits{,-narrow}.svg`:
   a halftone dot per day sized by GitHub's quartile, and a small octopus that walks the year
   one week per held step, eating each column; eaten dots grow back in order. The narrow cut
   shows the last 26 weeks. `--draw` redraws from the saved JSON without fetching.

@@ -3,25 +3,20 @@
 </p>
 
 <p>
-  <picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/intro-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/intro-dark.svg"><source media="(max-width: 600px)" srcset="assets/intro-light-narrow.svg"><img src="assets/intro-light.svg" width="100%" alt="Care is my building language. Writing code is becoming the easy part; deciding what to build, and why, is now the bottleneck. The time AI gives back, I spend on judgment: a clear spec before the build, a measure of whether it worked after, and the honesty to rethink the whole system when the numbers say it is wrong. The models are getting better quickly, which makes taste and care more valuable, not less. Nihan Bayrak. AI specialist, product manager, solutions engineer. Berlin. By day, WIN Creating Images."></picture>
+  <picture><source media="(max-width: 600px)" srcset="assets/intro-narrow.svg"><img src="assets/intro.svg" width="100%" alt="Care is my building language. Writing code is becoming the easy part; deciding what to build, and why, is now the bottleneck. The time AI gives back, I spend on judgment: a clear spec before the build, a measure of whether it worked after, and the honesty to rethink the whole system when the numbers say it is wrong. The models are getting better quickly, which makes taste and care more valuable, not less. Nihan Bayrak. AI specialist, product manager, solutions engineer. Berlin. By day, WIN Creating Images."></picture>
 </p>
 
 <a href="https://www.linkedin.com/in/nihan-bayrak/">LinkedIn</a> · <a href="https://consciouseyes.app">consciouseyes.app</a>
 
 <p>
-  <picture>
-    <source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/commits-dark-narrow.svg">
-    <source media="(prefers-color-scheme: dark)" srcset="assets/commits-dark.svg">
-    <source media="(max-width: 600px)" srcset="assets/commits-light-narrow.svg">
-    <img src="assets/commits-light.svg" width="100%" alt="Contribution graph: a year of work as halftone dots, one per day. A small brass octopus walks across it week by week and eats each day's dot, and the dots grow back.">
-  </picture>
+  <picture><source media="(max-width: 600px)" srcset="assets/commits-narrow.svg"><img src="assets/commits.svg" width="100%" alt="Contribution graph: a year of work as halftone dots, one per day. A small brass octopus walks across it week by week and eats each day's dot, and the dots grow back."></picture>
 </p>
 
 ## Pick a card
 
 Three jobs, one person. Each card opens its own door, and the case file under it holds the proof.
 
-<a href="https://www.linkedin.com/in/nihan-bayrak/"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-1-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-1-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-1-light-narrow.svg"><img src="assets/card-1-light.svg" width="100%" alt="I. Build, AI specialist. Roundtrip. A tester's screenshot goes in. A located, triaged and fixed case comes out. Ask for a demo."></picture></a>
+<a href="https://www.linkedin.com/in/nihan-bayrak/"><picture><source media="(max-width: 600px)" srcset="assets/card-1-narrow.svg"><img src="assets/card-1.svg" width="100%" alt="I. Build, AI specialist. Roundtrip. A tester's screenshot goes in. A located, triaged and fixed case comes out. Ask for a demo."></picture></a>
 
 <details>
 <summary>☞ Case file I · Roundtrip</summary>
@@ -37,7 +32,7 @@ Eleven tester reports from Conscious Eyes have gone through it. All eleven are f
 
 </details>
 
-<a href="https://consciouseyes.app"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-2-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-2-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-2-light-narrow.svg"><img src="assets/card-2-light.svg" width="100%" alt="II. Ship, product manager. Conscious Eyes. A food and cosmetics scanner that never invents an ingredient. 627 tests stand behind that. Visit the site."></picture></a>
+<a href="https://consciouseyes.app"><picture><source media="(max-width: 600px)" srcset="assets/card-2-narrow.svg"><img src="assets/card-2.svg" width="100%" alt="II. Ship, product manager. Conscious Eyes. A food and cosmetics scanner that never invents an ingredient. 627 tests stand behind that. Visit the site."></picture></a>
 
 <details>
 <summary>☞ Case file II · Conscious Eyes</summary>
@@ -52,7 +47,7 @@ Store. 627 tests stand behind it.
 
 </details>
 
-<a href="https://github.com/nihanbayrak/Ollama_pipeline"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-3-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-3-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-3-light-narrow.svg"><img src="assets/card-3-light.svg" width="100%" alt="III. Translate, solutions engineer. Brief to Concept. A raw client packaging brief becomes a design brief, then a first concept image, on one machine. Open the code."></picture></a>
+<a href="https://github.com/nihanbayrak/Ollama_pipeline"><picture><source media="(max-width: 600px)" srcset="assets/card-3-narrow.svg"><img src="assets/card-3.svg" width="100%" alt="III. Translate, solutions engineer. Brief to Concept. A raw client packaging brief becomes a design brief, then a first concept image, on one machine. Open the code."></picture></a>
 
 <details>
 <summary>☞ Case file III · Brief to Concept</summary>
