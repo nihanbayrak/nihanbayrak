@@ -142,6 +142,14 @@ def kaleidoscope(W, H, cx, cy):
         mirrors.append(f'<g transform="{turn}"><g clip-path="url(#kw)"><g class="kd">'
                        f'<use xlink:href="#kp"/></g></g></g>')
     body = f'<g transform="translate({cx:.0f} {cy:.0f})"><g class="ks">{"".join(mirrors)}</g></g>'
+    # Fade it in and out at the top and bottom, so on the one-image page it has no
+    # edge where the piece above meets it. Ground-coloured veils: cheaper than a mask.
+    fade = 70
+    defs += (f'<linearGradient id="kv" x1="0" y1="0" x2="0" y2="1">'
+             f'<stop offset="0" stop-color="{GROUND}"/><stop offset="1" stop-color="{GROUND}" stop-opacity="0"/>'
+             f'</linearGradient>')
+    body += (f'<rect width="{W}" height="{fade}" fill="url(#kv)"/>'
+             f'<rect width="{W}" height="{fade}" fill="url(#kv)" transform="translate(0 {H}) scale(1 -1)"/>')
     return defs, body
 
 
@@ -332,16 +340,3 @@ def build(L, ink, structure):
         "Nihan Bayrak. AI specialist, product manager, solutions engineer. Berlin. "
         "By day, WIN Creating Images."])
     return sh.svg(W, H, alt, style=STYLE + KALEIDOSCOPE_STYLE)
-
-
-def main():
-    ASSETS.mkdir(exist_ok=True)
-    for theme, colours in THEMES.items():
-        for cut, layout in LAYOUTS.items():
-            out = ASSETS / ("intro" + ("-narrow" if cut == "narrow" else "") + ".svg")
-            out.write_text(build(layout, **colours))
-            print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
-
-
-if __name__ == "__main__":
-    main()

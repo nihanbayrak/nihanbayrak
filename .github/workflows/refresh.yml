@@ -1,9 +1,9 @@
 name: Redraw the profile
 
 # Nightly: tools/commits.py reads the contribution calendar with this workflow's
-# own token and redraws the year the octopus walks through. On a push that
-# touches tools/ or data/, the octopus itself is re-rendered too, which catches a
-# render that stops working. Versions are pinned: this runs unattended.
+# own token, and tools/page.py redraws the one-image page around it. On a push
+# that touches tools/ or data/, the octopus's swim is re-rendered first, which
+# catches a render that stops working. Versions are pinned: this runs unattended.
 
 on:
   schedule:
@@ -31,14 +31,17 @@ jobs:
 
       - run: pip install --quiet numpy==2.5.2 pillow==12.3.0 fonttools==4.63.0 uharfbuzz==0.56.0
 
-      - name: Render the octopus
+      - name: Render the octopus swimming
         if: github.event_name != 'schedule'
         run: python tools/render.py
 
-      - name: Draw the year
+      - name: Fetch the year
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python tools/commits.py
+
+      - name: Compose the page
+        run: python tools/page.py
 
       - name: Commit if anything moved
         run: |

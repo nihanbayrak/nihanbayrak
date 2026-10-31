@@ -2,7 +2,7 @@
 
 Every day of the last year is a halftone dot, sized by GitHub's own quartile for
 that day. The octopus, drawn small after the automaton above it, walks the year
-one week at a time in held clockwork steps: its head rides along the top, its
+one week at a time at an even glide, bobbing as it goes: its head rides along the top, its
 tentacles hang down over that week's column, and every dot in the column is
 eaten. Eaten dots grow back in the order they went, and the walk starts again.
 
@@ -11,15 +11,14 @@ the dots are its own levels. Nothing here is a badge service. The nightly
 workflow fetches the calendar with its GITHUB_TOKEN; run by hand, it asks the
 gh CLI, which reads its own credentials, so no token passes through this file.
 
-    python tools/commits.py           # fetch, then draw
-    python tools/commits.py --draw    # draw from data/contributions.json
+    python tools/commits.py           # fetch and keep data/contributions.json
+    python tools/page.py              # draw it into the page
 
 Needs fonttools and uharfbuzz for the outlined captions (see typeset.py).
 """
 import json
 import os
 import subprocess
-import sys
 import urllib.error
 import urllib.request
 from datetime import date
@@ -100,11 +99,14 @@ def octopus(ink, lens, reach):
             curl = side * 4
             paths.append(f'M{x0} 4 C{x0 + sway} {reach * .35:.0f} {x1 - sway} {reach * .7:.0f} '
                          f'{x1} {reach - 4} q{curl} 3 {curl * .4:.1f} 6')
-        return (f'<path d="{" ".join(paths)}" fill="none" stroke="{ink}" stroke-width="1.2" '
-                f'stroke-linecap="round"/>')
+        return " ".join(paths)
 
-    return (head +
-            f'<g class="pa">{tentacles(2.5)}</g><g class="pb">{tentacles(-2.5)}</g>')
+    # The arms morph between two sways and back, smoothly: one path, its shape animated.
+    a, b = tentacles(3), tentacles(-3)
+    arms = (f'<path d="{a}" fill="none" stroke="{ink}" stroke-width="1.2" stroke-linecap="round">'
+            f'<animate attributeName="d" values="{a};{b};{a}" dur="1.3s" repeatCount="indefinite" '
+            f'calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/></path>')
+    return f'<g class="ob">{head}{arms}</g>'
 
 
 # ---------------------------------------------------------------- drawing
@@ -122,32 +124,27 @@ def build(cal, layout, ink, structure):
 
     sh = Sheet(ink, structure)
     style = [f"""
-.pa, .pb {{ animation: sway {STEP * 2:.2f}s steps(1, end) infinite; }}
-.pb {{ animation-name: sway-b; }}
-@keyframes sway {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0; }} }}
-@keyframes sway-b {{ 0%, 100% {{ opacity: 0; }} 50% {{ opacity: 1; }} }}
+.ob {{ animation: bob 1.3s ease-in-out infinite alternate; }}
+@keyframes bob {{ from {{ transform: translateY(-2px); }} to {{ transform: translateY(3px); }} }}
 .d {{ transform-box: fill-box; transform-origin: center;
-      animation: eat {T:.2f}s steps(1, end) infinite both; }}
+      animation: eat {T:.2f}s ease-out infinite both; }}
 @keyframes eat {{
   0%, {100 * EMPTY:.1f}% {{ transform: scale(0); }}
-  {100 * EMPTY + 2:.1f}% {{ transform: scale(.4); }}
-  {100 * EMPTY + 4:.1f}% {{ transform: scale(.75); }}
-  {100 * EMPTY + 6:.1f}%, 100% {{ transform: none; }}
+  {100 * EMPTY + 8:.1f}%, 100% {{ transform: none; }}
 }}"""]
 
-    # The walk: off the left edge, one held step per week, off the right edge.
+    # The walk: off the left edge, a week at a time at an even glide, off the right edge.
     frames = [f"0% {{ transform: translate({left - 40:.1f}px, {GRID_TOP - 12}px); }}"]
     for c in range(n):
         cx = left + c * PITCH + PITCH / 2
         frames.append(f"{pct((c + 1) * STEP)} {{ transform: translate({cx:.1f}px, {GRID_TOP - 12}px); }}")
     frames.append(f"{pct((n + 1) * STEP)}, 100% {{ transform: translate({W + 40}px, {GRID_TOP - 12}px); }}")
     style.append(f"""
-.o {{ animation: walk {T:.2f}s steps(1, end) infinite; }}
+.o {{ animation: walk {T:.2f}s linear infinite; }}
 @keyframes walk {{ {" ".join(frames)} }}
 @media (prefers-reduced-motion: reduce) {{
-  .o, .d, .pa, .pb {{ animation: none; }}
+  .o, .d, .ob {{ animation: none; }}
   .o {{ transform: translate({left + (n - 1) * PITCH + PITCH / 2:.1f}px, {GRID_TOP - 12}px); }}   /* parked on today */
-  .pb {{ opacity: 0; }}
 }}""")
 
     # Every day gets a socket; days with work get a dot that can be eaten.
@@ -189,15 +186,11 @@ def build(cal, layout, ink, structure):
 
 
 def main():
-    cal = None if "--draw" in sys.argv else fetch()
+    """Fetch the calendar and keep it; page.py draws it into the page."""
+    cal = fetch()
     if cal:
         DATA.write_text(json.dumps(cal, separators=(",", ":")) + "\n")
-    cal = json.loads(DATA.read_text())
-    for theme, colours in THEMES.items():
-        for cut, layout in LAYOUTS.items():
-            out = ASSETS / ("commits" + ("-narrow" if cut == "narrow" else "") + ".svg")
-            out.write_text(build(cal, layout, **colours))
-            print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
+        print(f"  contributions.json  {cal['total']} in the last year")
 
 
 if __name__ == "__main__":

@@ -1,38 +1,52 @@
-"""Renders the profile's one visual: the octopus, turning.
+"""Renders the octopus, swimming, as a loop of frames for the page to carry.
 
-It used to be an engraving — the mesh rasterised and then re-cut as hatch lines,
-which kept the whole thing vector. Nihan's note on 27 Aug settles it: it has to
-look like the model, and the model is a shaded object, not a drawing. So the page
-gets a real render, and a real render of a smooth surface is raster. See shade.py.
+It has been an engraving, then a turntable; Nihan's note on 1 Nov is that the
+octopus should move for real. So the mesh is bent each frame (swim.py) and lit
+by shade.py on the page's own Klein blue, with its shadow on that blue. The
+frames are written as stills, not as an animated image, because the page is one
+SVG with no gaps and the frames ride inside it (page.py).
 
-Nothing here reads the GitHub API and nothing carries type any more, so the render
-is deterministic and `typeset.py` is no longer in the path — it stays in the repo
-because the outline trick is worth keeping if type ever returns to an image.
+Deterministic: nothing here reads the GitHub API.
 """
 from pathlib import Path
 
+import numpy as np
+from PIL import Image
+
 import shade
+import swim
+from dance import GROUND
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = ROOT / "assets"
+FRAMES_DIR = ROOT / "assets" / "octopus"
 DATA = ROOT / "data"
 
-CANVAS = (1234, 706)         # shown at 700 wide, so it stays crisp on retina
-BOX = (275, 40, 684, 615)    # x, y, w, h of the object itself. The lamp is upper right,
-                             # so the shadow runs ~190 px left of the box; the room on the
-                             # left is for it, and as much again on the right keeps the animal
-                             # centred under the name. At 520 wide it was cut off in 37 of 48 frames.
-FRAMES = 48
-MS = 100                     # 4.8 seconds a revolution
+CANVAS = (800, 470)          # the top of the page, at its own width
+BOX = (200, 34, 440, 400)    # x, y, w, h of the animal; the lamp is upper right, so the
+                             # shadow falls left and the box sits right of centre for it
+FRAMES = 40                  # at MS each: one loop, two strokes
+MS = 100
+SCALE = 1.25                 # rendered a little above display size for retina
+
+
+def ground_rgb():
+    return np.array([int(GROUND[i:i + 2], 16) for i in (1, 3, 5)]) / 255.0
 
 
 def main():
-    ASSETS.mkdir(exist_ok=True)
+    FRAMES_DIR.mkdir(parents=True, exist_ok=True)
+    w, h = CANVAS
+    bx, by, bw, bh = BOX
     sh = shade.Shader(DATA / "nautilia-octopus.obj", DATA / "materials.json",
-                      box=BOX, canvas=CANVAS, frames=FRAMES)
-    out = ASSETS / "object.webp"
-    n = shade.turntable(sh, out, duration=MS)
-    print(f"  {out.name}  {n} frames  {out.stat().st_size/1024:.0f} KB")
+                      box=tuple(v * SCALE for v in (bx, by, bw, bh)),
+                      canvas=(round(w * SCALE), round(h * SCALE)), frames=48)
+    sh.ground = ground_rgb()
+    total = 0
+    for i, (rgb, _) in enumerate(swim.frames(sh, FRAMES)):
+        out = FRAMES_DIR / f"f{i:02d}.webp"
+        Image.fromarray((rgb * 255 + .5).astype(np.uint8)).save(out, quality=80, method=6)
+        total += out.stat().st_size
+    print(f"  octopus/  {FRAMES} frames  {total / 1024:.0f} KB")
 
 
 if __name__ == "__main__":

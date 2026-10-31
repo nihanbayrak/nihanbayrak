@@ -64,6 +64,32 @@ surface is a continuous gradient, so the page is raster now.
 Everything is in the history. The engraved renderer is `tools/engrave.py` at commit
 `9300246`, and the three rejected banner directions are still in `tools/variants.py`.
 
+## One image, no gaps (1 Nov)
+
+Nihan asked for everything on one background with no gaps, and for the octopuses to
+really move. GitHub puts space between any two README images, so the visual page is now
+**one SVG**: `tools/page.py` writes `assets/page.svg` and `assets/page-narrow.svg` (600 px
+and under, through `<picture>`). It nests every piece on one Klein blue ground: the
+octopus, the intro sheet (`dance.build`), the year (`commits.build`), a "Pick a card"
+header, and the three cards (`cards.build`), renaming each piece's glyph ids so they stay
+unique. The cards are no longer separate links (one image is one click); the case files
+under the image carry the links.
+
+- **The octopus swims.** `tools/swim.py` bends the mesh every frame: the dome stays
+  rigid, the arms carry a travelling wave out of step with each other, open and close in
+  two strokes a loop, the body rides each stroke, and the animal turns a little either
+  way. `tools/render.py` writes 40 frames to `assets/octopus/f00..f39.webp` on Klein blue
+  (shade.py now takes `sh.ground`), and `page.py` carries them inside the SVG as data
+  URIs, shown one at a time. About 1.3 MB per page file. `assets/object.webp` is the old
+  turntable and nothing uses it any more.
+- **The small octopus glides** through the year at an even pace, bobbing, its arms
+  morphing between two sways with SMIL `<animate>`; no more clockwork steps there.
+- **The kaleidoscope fades** in and out at the top and bottom of the intro through
+  ground-coloured gradient veils, so it has no edge where the octopus meets it.
+- **Order of work:** `render.py` (only when the swim changes), `commits.py` (fetches the
+  calendar), `page.py` (draws everything). The workflow runs the same three; at night it
+  skips the render. The page is redrawn nightly, so expect a ~1.3 MB file change per night.
+
 ## The renderer
 
 `tools/shade.py`. Three things in it were wrong first and are worth not repeating:

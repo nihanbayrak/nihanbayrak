@@ -33,8 +33,8 @@ CARDS = [
 ]
 
 LAYOUTS = {
-    "wide": dict(W=800, pad=30, numeral=96, title=44, deck=14.5, lead=23, fact=11, fact_lead=17),
-    "narrow": dict(W=380, pad=22, numeral=64, title=36, deck=14, lead=22, fact=10.5, fact_lead=16),
+    "wide": dict(W=800, pad=56, inset=40, numeral=96, title=44, deck=14.5, lead=23, fact=11, fact_lead=17),
+    "narrow": dict(W=380, pad=30, inset=18, numeral=64, title=36, deck=14, lead=22, fact=10.5, fact_lead=16),
 }
 
 STYLE = """
@@ -57,7 +57,7 @@ def manicule(sh, x, y, size, delay):
     return width
 
 
-def frame(sh, W, H, inset=8):
+def frame(sh, W, H, inset):
     sh.marks.append(f'<rect x="{inset}" y="{inset}" width="{W - 2 * inset}" height="{H - 2 * inset}" '
                     f'fill="none" stroke="{sh.ink}" stroke-width=".75"/>')
 
@@ -123,20 +123,7 @@ def build(card, L, delay, ink, structure):
         manicule(sh, x0 + w + 8, y + 6, 28, delay)
         H = y + pad + 14
 
-    frame(sh, W, H)
+    frame(sh, W, H, L["inset"])
     alt = (f'{card["n"]}. {card["act"].title()}, {card["role"].lower()}. {card["title"]}. '
            f'{card["deck"]} {card["verb"].capitalize()}.')
     return sh.svg(W, H, alt, title=card["title"], style=STYLE)
-
-
-def main():
-    for i, card in enumerate(CARDS, 1):
-        for theme, colours in THEMES.items():
-            for cut, layout in LAYOUTS.items():
-                out = ASSETS / (f"card-{i}" + ("-narrow" if cut == "narrow" else "") + ".svg")
-                out.write_text(build(card, layout, delay=.8 + i * .5, **colours))
-                print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
-
-
-if __name__ == "__main__":
-    main()
