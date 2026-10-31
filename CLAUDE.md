@@ -14,28 +14,36 @@ Two printed pieces and some markdown, laid out under `ninu-design`
   transparent ground with the shadow in the alpha. It sat on grained paper for one round;
   Nihan asked for it transparent again on 24 Oct, so it floats on GitHub's own page above
   the paper sheet. `shade.turntable(background=True)` still paints the paper if wanted.
-- **The sheet.** `tools/dance.py` writes `assets/intro-{light,dark}{,-narrow}.svg`: a ruled
-  panel of small-caps facts, an oxblood hairline between columns, the headline, a deck, and
-  body with a drop cap. Cormorant Infant Light is the character, Libre Baskerville does the
-  reading, Archivo Narrow carries the facts.
-- **Transparent, by her call on 25 Oct.** For one round the sheet and cards were printed on
-  grained paper `#F5F1E8`; she asked for everything to look transparent, so nothing on the
-  page has a ground of its own and the ink follows GitHub's theme. Light: tobacco
-  `#1A1611` and oxblood `#8B2027`. Dark: paper `#F0EBE0` and oxblood lifted to `#D25C64`.
-  Every image is a `<picture>` with four sources, dark and light by narrow (600 px and
-  under) and wide, the dark-and-narrow source first. This overrides ninu-design's printed
-  ground and grain for this page.
-- **Signature: clockwork.** Only the headline moves. Each letter steps up and back through
-  held positions (`steps(1, end)`), and the step runs along the line like a cam. Her skill's
-  rules held it there: body text never animates, nothing waits at opacity 0, no spring
-  bounce. Reduced motion gets the line at rest.
-
-- **The cards.** `tools/cards.py` writes `assets/card-{1,2,3}-{light,dark}{,-narrow}.svg`, one
+- **The sheet.** `tools/dance.py` writes `assets/intro{,-narrow}.svg`: a ruled panel of
+  small-caps facts, a gold hairline between columns, the headline, a deck, and body with a
+  drop cap. Cormorant Infant Light is the character, Libre Baskerville does the reading,
+  Archivo Narrow carries the facts. The copy is four sentences (1 Nov), written in the
+  register of Andrew Ng and Dario Amodei at her request: judgment is the bottleneck now.
+- **Klein, by her call on 1 Nov.** Every piece is printed on International Klein Blue
+  `#002FA7` with white type and one gold accent `#D9B44A` (Klein's third colour, and the
+  octopus's brass). With its own ground, each piece needs no light or dark version: one
+  file per width, `<picture>` picks the narrow cut at 600 px and under. Before this the
+  pieces were transparent with theme inks (25 Oct), and before that printed on paper.
+- **The kaleidoscope** behind the intro is Yao's (`~/claude_workspace/yao/src/ui/Kaleidoscope.tsx`)
+  ported to SVG: 56 bars and square-holed coins in one 30 degree wedge, clipped and mirrored
+  twelve times with `<use>`, the tube turning in 140 s and the pieces drifting in 16 s.
+  Tones of the ground's own blue plus faint gold and white, so the words lead.
+- **The cards.** `tools/cards.py` writes `assets/card-{1,2,3}{,-narrow}.svg`, one
   label per job, each its own link: the object you choose (her §1d references), since a
   click is the one thing a README allows. A manicule ☞ (Cormorant carries it) beside the
   printed verb steps forward in the same clockwork as the headline. The proof sits under
   each card in a `<details>` case file, the other thing a README allows: opening something.
   Principles and colophon fold away the same way. Run it from `tools/` after `dance.py`.
+
+- **The year, eaten.** `tools/commits.py` fetches the contribution calendar (the
+  workflow's `GITHUB_TOKEN` at night, the `gh` CLI by hand, so no token touches this
+  repo), keeps it in `data/contributions.json`, and writes `assets/commits{,-narrow}.svg`:
+  a halftone dot per day sized by GitHub's quartile, and a small octopus that walks the year
+  one week per held step, eating each column; eaten dots grow back in order. The narrow cut
+  shows the last 26 weeks. `--draw` redraws from the saved JSON without fetching.
+- **The nightly run is back** (`refresh.yml`, 04:17 UTC) for the graph only; the octopus
+  render runs on pushes. It commits to `main` every night, so a long lived branch that
+  touches `assets/commits-*` or `data/contributions.json` will conflict: take main's copy.
 
 Nihan first asked for hover, then for the whole text to dance. A README cannot hover (no
 script, and pointer events never reach an image), and her own skill keeps body text still,
@@ -55,6 +63,32 @@ surface is a continuous gradient, so the page is raster now.
 
 Everything is in the history. The engraved renderer is `tools/engrave.py` at commit
 `9300246`, and the three rejected banner directions are still in `tools/variants.py`.
+
+## One image, no gaps (1 Nov)
+
+Nihan asked for everything on one background with no gaps, and for the octopuses to
+really move. GitHub puts space between any two README images, so the visual page is now
+**one SVG**: `tools/page.py` writes `assets/page.svg` and `assets/page-narrow.svg` (600 px
+and under, through `<picture>`). It nests every piece on one Klein blue ground: the
+octopus, the intro sheet (`dance.build`), the year (`commits.build`), a "Pick a card"
+header, and the three cards (`cards.build`), renaming each piece's glyph ids so they stay
+unique. The cards are no longer separate links (one image is one click); the case files
+under the image carry the links.
+
+- **The octopus swims.** `tools/swim.py` bends the mesh every frame: the dome stays
+  rigid, the arms carry a travelling wave out of step with each other, open and close in
+  two strokes a loop, the body rides each stroke, and the animal turns a little either
+  way. `tools/render.py` writes 40 frames to `assets/octopus/f00..f39.webp` on Klein blue
+  (shade.py now takes `sh.ground`), and `page.py` carries them inside the SVG as data
+  URIs, shown one at a time. About 1.3 MB per page file. `assets/object.webp` is the old
+  turntable and nothing uses it any more.
+- **The small octopus glides** through the year at an even pace, bobbing, its arms
+  morphing between two sways with SMIL `<animate>`; no more clockwork steps there.
+- **The kaleidoscope fades** in and out at the top and bottom of the intro through
+  ground-coloured gradient veils, so it has no edge where the octopus meets it.
+- **Order of work:** `render.py` (only when the swim changes), `commits.py` (fetches the
+  calendar), `page.py` (draws everything). The workflow runs the same three; at night it
+  skips the render. The page is redrawn nightly, so expect a ~1.3 MB file change per night.
 
 ## The renderer
 

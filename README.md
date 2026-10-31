@@ -1,18 +1,11 @@
 <p>
-  <img src="assets/object.webp" width="100%" alt="A brass and bone enamel mechanical octopus automaton turning slowly on its axis, green lenses for eyes, its shadow pooling to the left">
-</p>
-
-<p>
-  <picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/intro-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/intro-dark.svg"><source media="(max-width: 600px)" srcset="assets/intro-light-narrow.svg"><img src="assets/intro-light.svg" width="100%" alt="Care is my building language. AI made building fast. Most people spend that speed on building more. I spend it on attention. The hours AI gives back, I put into planning: what we are making, why, and how we will know it worked. Then I track it, measure it and improve it. When the numbers say the system is wrong, I take the whole thing apart and rethink it, even when that is the uncomfortable thing to do. Especially then. I trust my taste, and I test it. Most people in this field have no visual vocabulary; most people with one cannot ship. I work in between. Nihan Bayrak. AI specialist, product manager, solutions engineer. Berlin. By day, WIN Creating Images."></picture>
+  <picture>
+    <source media="(max-width: 600px)" srcset="assets/page-narrow.svg">
+    <img src="assets/page.svg" width="100%" alt="A brass and bone enamel octopus automaton swims on Yves Klein blue, its arms waving. Care is my building language. Writing code is becoming the easy part; deciding what to build, and why, is now the bottleneck. The time AI gives back, I spend on judgment: a clear spec before the build, a measure of whether it worked after, and the honesty to rethink the whole system when the numbers say it is wrong. The models are getting better quickly, which makes taste and care more valuable, not less. Nihan Bayrak: AI specialist, product manager, solutions engineer, Berlin. Below, a year of contributions, 328 in all, as dots that a small octopus walks through and eats. Then three cards: Roundtrip, Conscious Eyes, and Brief to Concept.">
+  </picture>
 </p>
 
 <a href="https://www.linkedin.com/in/nihan-bayrak/">LinkedIn</a> · <a href="https://consciouseyes.app">consciouseyes.app</a>
-
-## Pick a card
-
-Three jobs, one person. Each card opens its own door, and the case file under it holds the proof.
-
-<a href="https://www.linkedin.com/in/nihan-bayrak/"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-1-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-1-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-1-light-narrow.svg"><img src="assets/card-1-light.svg" width="100%" alt="I. Build, AI specialist. Roundtrip. A tester's screenshot goes in. A located, triaged and fixed case comes out. Ask for a demo."></picture></a>
 
 <details>
 <summary>☞ Case file I · Roundtrip</summary>
@@ -28,8 +21,6 @@ Eleven tester reports from Conscious Eyes have gone through it. All eleven are f
 
 </details>
 
-<a href="https://consciouseyes.app"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-2-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-2-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-2-light-narrow.svg"><img src="assets/card-2-light.svg" width="100%" alt="II. Ship, product manager. Conscious Eyes. A food and cosmetics scanner that never invents an ingredient. 627 tests stand behind that. Visit the site."></picture></a>
-
 <details>
 <summary>☞ Case file II · Conscious Eyes</summary>
 <br>
@@ -42,8 +33,6 @@ Store. 627 tests stand behind it.
 `React Native · TypeScript · Expo` · [consciouseyes.app](https://consciouseyes.app)
 
 </details>
-
-<a href="https://github.com/nihanbayrak/Ollama_pipeline"><picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-3-dark-narrow.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/card-3-dark.svg"><source media="(max-width: 600px)" srcset="assets/card-3-light-narrow.svg"><img src="assets/card-3-light.svg" width="100%" alt="III. Translate, solutions engineer. Brief to Concept. A raw client packaging brief becomes a design brief, then a first concept image, on one machine. Open the code."></picture></a>
 
 <details>
 <summary>☞ Case file III · Brief to Concept</summary>
@@ -77,11 +66,14 @@ material never touches an outside API.
 <summary>☞ How this page is made</summary>
 <br>
 
-The octopus is a mesh, not a video: 37,327 triangles in 427 parts, rendered frame by frame
-in plain numpy with a depth buffer, smooth normals and the PBR materials lifted from the
-source model, then a shadow cast onto a floor that is not there. The sheet under it is set like
-a 1922 magazine page, and its headline ticks like the automaton above it: every letter steps
-up and back through held positions, because a README allows no script and no hover. Drawn by
-[`tools/render.py`](tools/render.py) and [`tools/dance.py`](tools/dance.py).
+One image, so there are no gaps. The octopus is a mesh, not a video: 37,327 triangles in 427
+parts, bent every frame so the arms wave and the body rides each stroke, then lit in plain
+numpy on the page's own Klein blue ([`tools/render.py`](tools/render.py),
+[`tools/swim.py`](tools/swim.py)). Under it, the words are set like a 1922 magazine page with
+Yao's kaleidoscope turning behind them, and the headline ticks letter by letter
+([`tools/dance.py`](tools/dance.py)). The dots are the last year of contributions, redrawn
+every night from GitHub's own calendar; the small octopus glides through them a week at a
+time and eats what it finds ([`tools/commits.py`](tools/commits.py)). A README allows no
+script and no hover, so all of it is CSS inside one SVG ([`tools/page.py`](tools/page.py)).
 
 </details>

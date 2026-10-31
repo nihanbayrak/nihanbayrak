@@ -244,7 +244,7 @@ class Shader:
         shadow = np.clip(self._shadow(theta), 0, 1)[..., None]
 
         if background:
-            paper = _linear(PAPER)
+            paper = _linear(getattr(self, "ground", PAPER))   # a page can lend its own ground
             floor = _srgb(paper * (1.0 - SHADOW_STRENGTH * shadow))
             out = floor * (1 - a_obj) + rgb * a_obj
             alpha = np.ones_like(a_obj)
