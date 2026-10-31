@@ -4,23 +4,29 @@ The `nihanbayrak/nihanbayrak` profile README — the page GitHub shows above her
 
 ## What this is
 
-Two images and nothing else, by Nihan's call on 1 Nov: the octopus swimming, and the
-words **Harness engineer** under it. No background, no other text.
+One card, by Nihan's call on 1 Nov: a neofetch readout of her, after the terminal-card
+style of Andrew Grant's profile, with her own content and this repo's own code. A portrait
+in signs on the left, key and value pairs joined by leader dots on the right, GitHub
+numbers at the foot.
 
-- `tools/render.py` writes `assets/octopus.webp`: 40 frames, 4 s a loop, transparent,
-  the shadow in the alpha so it swims on either GitHub theme. `tools/swim.py` bends the
-  mesh each frame: the dome stays rigid, a travelling wave runs down each arm out of step
-  with its neighbours, the arms open and close in two strokes a loop, the body rides each
-  stroke, and the animal turns a little either way.
-- `tools/title.py` writes `assets/title-{light,dark}.svg`: the two words in Cormorant
-  Infant Light as outlines, tobacco ink on light and paper ink on dark, picked through
-  `<picture>`.
+- `tools/portrait.py PHOTO` writes `data/portrait.txt`: signs only (` .`',:;-~+=*%#&$@`),
+  the wall dropped by colour, the face equalised inside that mask, edges darkened. **Her
+  photo never enters the repo**; only the characters do. Default crop is her close-up,
+  head and shoulders, 46 columns by 26 rows.
+- `tools/stats.py` writes `data/stats.json`: public non-fork repos, stars, followers,
+  commits since the account opened (plus GitHub's restricted count), and lines of code from
+  her own commits on each public repo. A commit moving more than 50,000 lines is a data
+  file, not code, and is skipped: one CSV added and deleted would swing it by 2.8 million.
+  The gh CLI by hand, the workflow's `GITHUB_TOKEN` in Actions; no token in the repo.
+- `tools/neofetch.py` writes `assets/card-{light,dark}{,-narrow}.svg`, all type outlined
+  JetBrains Mono so it never falls back to Times. Uptime counts from the account's
+  opening day. The readout's content lives in `readout()`; hobbies and the IDE line are
+  inferred, not stated by her, so check them with her before trusting them.
+- `refresh.yml` reruns stats and the card daily at 04:17 UTC and commits if they moved.
 
-Everything the page carried before (the 1922 sheet, the clockwork headline, Yao's
-kaleidoscope on Klein blue, the year the small octopus ate, the three cards and their case
-files, the one-image composer) is in the history: the last commit with all of it is
-`fff297d`. `assets/object.webp`, the old turntable, predates this round and is unused;
-Nihan has not said whether to delete it.
+The swimming octopus and the "Harness engineer" title (`render.py`, `swim.py`, `title.py`,
+`assets/octopus.webp`, `assets/title-*.svg`) are still in the repo but not on the page.
+Everything older is in the history; the last full page is `fff297d`.
 
 ## The renderer
 
@@ -62,8 +68,8 @@ press would actually ink.
 
 ## Editing
 
-The README is two pictures. The words live in `tools/title.py`; change them there and in
-the README's alt text. `data/profile.toml` no longer feeds the README; it survives as the
+The README is one `<picture>`. The card's words live in `tools/neofetch.py`; change them
+there and in the README's alt text. `data/profile.toml` no longer feeds the README; it survives as the
 source for the portfolio site (see below).
 
 ```bash
@@ -80,8 +86,9 @@ which were visible by reading the SVG.
 
 ## Two things will overwrite you
 
-`refresh.yml` runs on a push to `main` touching `tools/**` or `data/**`, re-renders the
-octopus and the title, and commits if anything moved. There is no nightly run any more.
+`refresh.yml` runs daily and on a push to `main` touching `tools/**` or `data/**`: it
+refetches the stats, redraws the card, and commits if anything moved (Uptime alone moves
+it every day).
 The render is deterministic, so it should not produce a diff, but `git pull --rebase`
 before pushing anyway.
 

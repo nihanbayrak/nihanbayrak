@@ -1,10 +1,6 @@
-<p align="center">
-  <img src="assets/octopus.webp" width="620" alt="A brass and bone enamel octopus automaton swimming, its arms waving">
-</p>
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/title-dark.svg">
-    <img src="assets/title-light.svg" width="440" alt="Harness engineer">
-  </picture>
-</p>
+<picture>
+  <source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/card-dark-narrow.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/card-dark.svg">
+  <source media="(max-width: 600px)" srcset="assets/card-light-narrow.svg">
+  <img src="assets/card-light.svg" width="100%" alt="Nihan Bayrak, as a terminal readout: a portrait drawn in signs beside her details. Harness engineer at WIN Creating Images, Berlin.">
+</picture>
