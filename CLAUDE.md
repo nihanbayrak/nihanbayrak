@@ -37,6 +37,16 @@ Two printed pieces and some markdown, laid out under `ninu-design`
   each card in a `<details>` case file, the other thing a README allows: opening something.
   Principles and colophon fold away the same way. Run it from `tools/` after `dance.py`.
 
+- **The year, eaten.** `tools/commits.py` fetches the contribution calendar (the
+  workflow's `GITHUB_TOKEN` at night, the `gh` CLI by hand, so no token touches this
+  repo), keeps it in `data/contributions.json`, and writes `assets/commits-{light,dark}{,-narrow}.svg`:
+  a halftone dot per day sized by GitHub's quartile, and a small octopus that walks the year
+  one week per held step, eating each column; eaten dots grow back in order. The narrow cut
+  shows the last 26 weeks. `--draw` redraws from the saved JSON without fetching.
+- **The nightly run is back** (`refresh.yml`, 04:17 UTC) for the graph only; the octopus
+  render runs on pushes. It commits to `main` every night, so a long lived branch that
+  touches `assets/commits-*` or `data/contributions.json` will conflict: take main's copy.
+
 Nihan first asked for hover, then for the whole text to dance. A README cannot hover (no
 script, and pointer events never reach an image), and her own skill keeps body text still,
 so the display line carries the motion. The copy lives in `dance.py` and again in the

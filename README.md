@@ -8,6 +8,15 @@
 
 <a href="https://www.linkedin.com/in/nihan-bayrak/">LinkedIn</a> · <a href="https://consciouseyes.app">consciouseyes.app</a>
 
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/commits-dark-narrow.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/commits-dark.svg">
+    <source media="(max-width: 600px)" srcset="assets/commits-light-narrow.svg">
+    <img src="assets/commits-light.svg" width="100%" alt="Contribution graph: a year of work as halftone dots, one per day. A small brass octopus walks across it week by week and eats each day's dot, and the dots grow back.">
+  </picture>
+</p>
+
 ## Pick a card
 
 Three jobs, one person. Each card opens its own door, and the case file under it holds the proof.
@@ -83,5 +92,9 @@ source model, then a shadow cast onto a floor that is not there. The sheet under
 a 1922 magazine page, and its headline ticks like the automaton above it: every letter steps
 up and back through held positions, because a README allows no script and no hover. Drawn by
 [`tools/render.py`](tools/render.py) and [`tools/dance.py`](tools/dance.py).
+
+
+The dots under the sheet are the last year of contributions, redrawn every night from GitHub's own calendar by
+[`tools/commits.py`](tools/commits.py). The octopus walks it one week at a time and eats what it finds.
 
 </details>
