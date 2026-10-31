@@ -1,13 +1,10 @@
 name: Redraw the profile
 
-# Nightly: tools/commits.py reads the contribution calendar with this workflow's
-# own token, and tools/page.py redraws the one-image page around it. On a push
-# that touches tools/ or data/, the octopus's swim is re-rendered first, which
-# catches a render that stops working. Versions are pinned: this runs unattended.
+# On a push that touches tools/ or data/, re-render the octopus's swim and the
+# title, which catches a render that stops working. Versions are pinned: this
+# runs unattended.
 
 on:
-  schedule:
-    - cron: "17 4 * * *"     # nightly, after the contribution graph settles
   push:
     branches: [main]
     paths:
@@ -32,21 +29,15 @@ jobs:
       - run: pip install --quiet numpy==2.5.2 pillow==12.3.0 fonttools==4.63.0 uharfbuzz==0.56.0
 
       - name: Render the octopus swimming
-        if: github.event_name != 'schedule'
         run: python tools/render.py
 
-      - name: Fetch the year
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python tools/commits.py
-
-      - name: Compose the page
-        run: python tools/page.py
+      - name: Set the title
+        run: python tools/title.py
 
       - name: Commit if anything moved
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets data
-          git diff --staged --quiet || git commit -m "Redraw: the year as of $(date -u +%Y-%m-%d)"
+          git add assets
+          git diff --staged --quiet || git commit -m "Redraw the octopus, $(date -u +%Y-%m-%d)"
           git push

@@ -41,7 +41,7 @@ def _bend(v, phase):
     return out
 
 
-def frames(sh, n):
+def frames(sh, n, background=True):
     """Yield (rgb, alpha) for n frames of one loop. Restores the shader after."""
     v0, sv0, n0 = sh.v, sh.sv, sh.n
     try:
@@ -50,6 +50,6 @@ def frames(sh, n):
             sh.v = _bend(v0, phase)
             sh.n = model3d.vertex_normals(sh.v, sh.f)
             sh.sv = _bend(sv0, phase)
-            yield sh.frame(TURN * math.sin(math.tau * phase), background=True)
+            yield sh.frame(TURN * math.sin(math.tau * phase), background=background)
     finally:
         sh.v, sh.sv, sh.n = v0, sv0, n0
