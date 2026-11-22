@@ -285,12 +285,48 @@ def test_nightly_path_needs_no_numpy_or_pillow(self):
 
 ---
 
-### Task 6: Notes, rebase, preview
+### Task 6: The repo holds only the card
+
+**Files:**
+- Delete: `assets/object.webp`, `assets/octopus.webp`, `assets/title-dark.svg`, `assets/title-light.svg`, `data/materials.json`, `data/nautilia-octopus.obj`, `tools/render.py`, `tools/swim.py`, `tools/shade.py`, `tools/model3d.py`, `tools/export-object.py`, `tools/title.py`, `tools/variants.py`, `tools/fonts/CormorantInfant.ttf`, `tools/fonts/ArchivoNarrow.ttf`
+- Modify: `tools/typeset.py` (drop faces `display`, `display_med`, `fact`, `fact_bold`)
+- Test: `tests/test_repo.py`
+
+**Interfaces:**
+- Consumes: everything from Tasks 1–5. Keeps `data/profile.toml`, `data/work.json`, `tools/export-site-data.py` (her portfolio site reads them).
+
+- [ ] **Step 1: Write the failing test:**
+
+```python
+GONE = ["assets/object.webp", "assets/octopus.webp", "assets/title-dark.svg", "assets/title-light.svg",
+        "data/materials.json", "data/nautilia-octopus.obj", "tools/render.py", "tools/swim.py",
+        "tools/shade.py", "tools/model3d.py", "tools/export-object.py", "tools/title.py",
+        "tools/variants.py", "tools/fonts/CormorantInfant.ttf", "tools/fonts/ArchivoNarrow.ttf"]
+KEPT = ["data/profile.toml", "data/work.json", "tools/export-site-data.py"]
+
+def test_only_the_card_remains(self):
+    tracked = set(subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.split())
+    self.assertFalse(tracked & set(GONE))
+    self.assertTrue(set(KEPT) <= tracked)
+    self.assertEqual(set(typeset.FACES), {"mono", "mono_bold", "mono_light", "voice"})
+```
+
+- [ ] **Step 2: Run it to see it fail.** Expected: FAIL (files still tracked).
+
+- [ ] **Step 3: Remove them.** `git rm -q` each path in `GONE`; delete the four faces from `FACES`.
+
+- [ ] **Step 4: Run the whole suite and both tools.** Run: `../github-profile/.venv/bin/python -m unittest discover -s tests -v`, then `../github-profile/.venv/bin/python tools/neofetch.py` and `../github-profile/.venv/bin/python tools/export-site-data.py`. Expected: all PASS; both tools run; `git status` shows no change to `assets/card*.svg` or `data/work.json`.
+
+- [ ] **Step 5: Commit.** `git add tools/typeset.py tests/test_repo.py && git commit -m "The repo holds only the card"`
+
+---
+
+### Task 7: Notes, rebase, preview
 
 **Files:**
 - Modify: `CLAUDE.md` (sections "What this is", "Design", "Editing", "Dependencies")
 
-- [ ] **Step 1: Update `CLAUDE.md`.** The card is now the living card from the spec: one green card plus a narrow cut, `data/portrait.json` from `tools/portrait.py` (Apple Vision, Mac only), motion rules in `tools/motion.py`, Fraunces italic in `tools/fonts/`, tests via `unittest`, playback via `tools/check_live.py`. Replace "Direction B, editorial" with the green palette and point to the spec.
+- [ ] **Step 1: Update `CLAUDE.md`.** The card is now the living card from the spec: one green card plus a narrow cut, `data/portrait.json` from `tools/portrait.py` (Apple Vision, Mac only), motion rules in `tools/motion.py`, Fraunces italic in `tools/fonts/`, tests via `unittest`, playback via `tools/check_live.py`. Replace "Direction B, editorial" with the green palette and point to the spec. Delete the sections "The renderer" and "The object" and the octopus paragraph, since their code is gone (say once that history keeps them, last full page `fff297d`). Keep "One source for the project list".
 
 - [ ] **Step 2: Rebase.** Run: `git fetch origin && git rebase origin/main`. A conflict on a themed card is the nightly bot redrawing a file this branch deletes: resolve with `git rm` on that card. Rerun the tests and `tools/neofetch.py`; commit any change to the cards.
 

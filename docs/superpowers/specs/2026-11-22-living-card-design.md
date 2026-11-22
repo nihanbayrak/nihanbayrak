@@ -168,6 +168,23 @@ Keep the existing pipeline and its rules (`CLAUDE.md`); change these parts.
   over from `fix-workflow-deps`: it is already in `main`'s history, and the `skia-pathops`
   it added served `tools/sort3d.py`, which is not on `main`.
 
+### The repo holds only the card
+
+Nihan's call, 22 Nov: the profile repo keeps only what the living card needs. Remove the
+octopus, the title and the banner experiments, which no page uses (git history keeps them;
+the last full page is `fff297d`):
+
+- `assets/object.webp`, `assets/octopus.webp`, `assets/title-dark.svg`, `assets/title-light.svg`
+- `data/materials.json`, `data/nautilia-octopus.obj`
+- `tools/render.py`, `tools/swim.py`, `tools/shade.py`, `tools/model3d.py`,
+  `tools/export-object.py`, `tools/title.py`, `tools/variants.py`
+- `tools/fonts/CormorantInfant.ttf`, `tools/fonts/ArchivoNarrow.ttf`, and their faces in
+  `typeset.py` (`display`, `display_med`, `fact`, `fact_bold`)
+
+**Kept, though not the card:** `data/profile.toml`, `data/work.json` and
+`tools/export-site-data.py` feed her portfolio site (`nihanbayrak.github.io/portfolio`).
+Removing them breaks that site's work list. They stay until she says otherwise.
+
 ### Size
 
 Eight frames of 66 × 42 signs is about 22,000 `<use>` elements. Keep each card under
