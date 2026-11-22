@@ -61,16 +61,23 @@ def flip_css(prefix):
             kf = f"0%{{opacity:0}}{on}{{opacity:1}}100%{{opacity:1}}"
         else:
             kf = f"0%{{opacity:0}}{on}{{opacity:1}}{off}{{opacity:0}}100%{{opacity:0}}"
+        # at rest, where animation does not run, only frame 0 shows
+        rest = "opacity:0;" if k else ""
         css.append(f"@keyframes {prefix}f{k}{{{kf}}}"
-                   f".{prefix}f{k}{{animation:{prefix}f{k} {FLIP_S}s step-end infinite}}")
+                   f".{prefix}f{k}{{{rest}animation:{prefix}f{k} {FLIP_S}s step-end infinite}}")
     return "".join(css)
 
 
-def type_css(prefix, j, edges, width):
+def type_css(prefix, j, edges, width, x=0):
     """Keyframes and class {prefix}v{j} for motto j's mask rect.
 
     `edges` are the mask's right edge after 0, 1, … n letters (edges[0] == 0); `width` is
-    the rect's width. Type to TYPE_END, hold to HOLD_END, erase by ERASE_END, then hide.
+    the rect's width and `x` its left edge, in user units. Type to TYPE_END, hold to
+    HOLD_END, erase by ERASE_END, then hide.
+
+    The rect scales from its own left edge, written in user units: that needs no
+    transform-box, which not every engine honours. At rest — where animation does not
+    run — motto 0 shows in full and the others stay hidden.
     """
     n = len(edges) - 1
     steps = [(TYPE_END * i / n, edges[i]) for i in range(n + 1)]
@@ -79,7 +86,7 @@ def type_css(prefix, j, edges, width):
     kf += "100%{transform:scaleX(0)}"
     delay = -CYCLE_S + j * CYCLE_S // 3
     return (f"@keyframes {prefix}v{j}{{{kf}}}"
-            f".{prefix}v{j}{{transform-box:fill-box;transform-origin:left;transform:scaleX(0);"
+            f".{prefix}v{j}{{transform-origin:{x:g}px 0;transform:scaleX({1 if j == 0 else 0});"
             f"animation:{prefix}v{j} {CYCLE_S}s step-end {delay}s infinite}}")
 
 

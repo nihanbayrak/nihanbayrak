@@ -155,7 +155,7 @@ def mottos(x, y, size, p):
         defs.append(f'<mask id="{p}m{j}"><rect class="{p}v{j}" x="{x}" y="{y - size:.1f}" '
                     f'width="{width:.2f}" height="{size * 1.5:.1f}" fill="#fff"/></mask>')
         body.append(f'<g mask="url(#{p}m{j})">{typeset.text(text, "voice", size, x, y, PALE)}</g>')
-        css.append(motion.type_css(p, j, edges, width))
+        css.append(motion.type_css(p, j, edges, width, x))
     return "".join(defs), "".join(body), "".join(css)
 
 

@@ -79,6 +79,35 @@ class Typing(unittest.TestCase):
             self.assertIn(f"{-18 + 6 * j}s infinite", motion.type_css("c", j, *edges_for(MOTTOS[j])))
 
 
+def base_rule(css, cls):
+    """The declarations of `.cls{…}` outside any @keyframes or @media block."""
+    import re
+    flat = re.sub(r"@(keyframes|media)[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}", "", css)
+    m = re.search(r"\." + cls + r"\{([^}]*)\}", flat)
+    return m.group(1) if m else ""
+
+
+class AnyEngine(unittest.TestCase):
+    def test_mask_pivots_on_its_own_left_edge_without_fill_box(self):
+        # Review finding: transform-origin "left" only meant the rect's edge because of
+        # transform-box:fill-box. In user units the pivot is right in every engine.
+        css = motion.type_css("c", 0, *edges_for(MOTTOS[0]), x=384)
+        self.assertNotIn("transform-box", css)
+        self.assertIn("transform-origin:384px 0", base_rule(css, "cv0"))
+
+    def test_complete_at_rest(self):
+        # Review finding: a renderer that applies CSS but not animation stacked all 8
+        # frames into a smear. At rest: frame 0 and motto 0, nothing else.
+        css = motion.flip_css("c") + "".join(
+            motion.type_css("c", j, *edges_for(m), x=384) for j, m in enumerate(MOTTOS))
+        self.assertNotIn("opacity:0", base_rule(css, "cf0"))
+        for k in range(1, 8):
+            self.assertIn("opacity:0", base_rule(css, f"cf{k}"), k)
+        self.assertIn("scaleX(1)", base_rule(css, "cv0"))
+        for j in (1, 2):
+            self.assertIn("scaleX(0)", base_rule(css, f"cv{j}"), j)
+
+
 class Still(unittest.TestCase):
     def test_still_css_shows_frame_0_and_line_0(self):
         css = motion.still_css("c")
