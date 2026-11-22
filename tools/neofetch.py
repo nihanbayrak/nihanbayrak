@@ -28,9 +28,9 @@ DATA = ROOT / "data"
 GROUND, MID, PALE = "#0B3B2E", "#4FA383", "#D3F2E4"
 ROLES = {"text": PALE, "key": MID, "dots": MID, "value": PALE}
 RULE = "─"
-INFO_COLS, KEY_COLS = 66, 20      # values start at column 22
+INFO_COLS = 55                     # the widest line, tools.ide
 ART_SIZE, ART_LEAD = 8.6, 9.2
-INFO_SIZE, INFO_LEAD = 11, 16
+INFO_SIZE, INFO_LEAD = 12, 17
 VOICE_SIZE = 19
 ALT = "Nihan Bayrak as a moving terminal readout: her portrait drawn in signs beside her details. Berlin."
 MOTTOS = [
@@ -42,64 +42,53 @@ MOTTOS = [
 
 # ---------------------------------------------------------------- content
 
-def uptime(since, today):
-    y, m, d = today.year - since.year, today.month - since.month, today.day - since.day
-    if d < 0:
-        m -= 1
-        prev = date(today.year, today.month, 1).toordinal() - 1
-        d += date.fromordinal(prev).day
-    if m < 0:
-        y, m = y - 1, m + 12
-    plural = lambda n, w: f"{n} {w}{'' if n == 1 else 's'}"
-    return f"{plural(y, 'year')}, {plural(m, 'month')}, {plural(d, 'day')}"
+# My own text, line for line: "key: value", a blank line between groups. It changes only
+# when I change it here.
+TEXT = """nihan: Profile
+
+role: AI specialist
+dayJob: AI tools for consumer brands
+city: Berlin
+spokenLanguages: TR, EN, DE
+
+tools.languages: Python, TypeScript, SQL
+tools.ide: Claude Code, Xcode, Codex, VS Code, Langdock
+tools.shell: zsh
+
+interests.creative: 3D modeling and printing
+interests.offScreen: Modeling, sailing, creating gifts
+
+building: Projects
+
+evals: Copyright risk in image prompts
+agents: Roundtrip · TestFlight feedback triage
+product: Conscious Eyes · iOS label scanner
+
+contact: Contact
+
+linkedIn: nihan-bayrak
+website: consciouseyes.app"""
 
 
-def readout(stats, today):
-    """Lines of the readout. A pair is ('pair', key, value). Her words, her keys; keep them.
-    uptime and the GitHub line are the two live lines the nightly redraw updates."""
-    return [
-        ("title", "nihan@bayrak"),
-        ("section", "Profile"),
-        ("pair", "role", "AI specialist"),
-        ("pair", "dayJob", "AI tools for consumer brands"),
-        ("pair", "city", "Berlin"),
-        ("pair", "spokenLanguages", "TR, EN, DE"),
-        ("pair", "uptime", uptime(date.fromisoformat(stats["created"]), today)),
-        ("blank",),
-        ("pair", "tools.languages", "Python, TypeScript, SQL"),
-        ("pair", "tools.ide", "Claude Code, Xcode, Codex, VS Code, Langdock"),
-        ("pair", "tools.shell", "zsh"),
-        ("blank",),
-        ("pair", "interests.creative", "3D modeling and printing"),
-        ("pair", "interests.offScreen", "Modeling, sailing, creating gifts"),
-        ("blank",),
-        ("section", "Projects"),
-        ("pair", "evals", "Copyright risk in image prompts"),
-        ("pair", "agents", "Roundtrip · TestFlight feedback triage"),
-        ("pair", "product", "Conscious Eyes · iOS label scanner"),
-        ("blank",),
-        ("section", "Contact"),
-        ("pair", "linkedIn", "nihan-bayrak"),
-        ("pair", "website", "consciouseyes.app"),
-        ("blank",),
-        ("section", "GitHub"),
-        ("pair", "commits", f'{stats["commits"]:,} · repos {stats["repos"]} · followers {stats["followers"]}'),
-    ]
+def readout():
+    """The lines of TEXT as ('pair', key, value), or ('blank',) between groups."""
+    lines = []
+    for raw in TEXT.split("\n"):
+        if not raw.strip():
+            lines.append(("blank",))
+        else:
+            key, value = raw.split(": ", 1)
+            lines.append(("pair", key, value))
+    return lines
 
 
 def spans(line):
-    """A readout line as [(text, role)], INFO_COLS columns or fewer."""
-    kind = line[0]
-    if kind == "title":
-        return [(line[1] + " ", "text"), (RULE * (INFO_COLS - len(line[1]) - 1), "dots")]
-    if kind == "section":
-        return [(RULE + " ", "dots"), (line[1], "text"), (" " + RULE * (INFO_COLS - len(line[1]) - 3), "dots")]
-    if kind == "blank":
+    """A readout line as [(text, role)]: the key, a colon, the value."""
+    if line[0] == "blank":
         return []
-    if kind == "pair":
-        key, value = line[1], line[2]
-        return [(key, "key"), (" " + "." * (KEY_COLS - len(key)), "dots"), (" " + value, "value")]
-    raise ValueError(kind)
+    if line[0] == "pair":
+        return [(line[1], "key"), (": ", "dots"), (line[2], "value")]
+    raise ValueError(line[0])
 
 
 # ---------------------------------------------------------------- drawing
@@ -175,8 +164,7 @@ def mottos(x, y, size, p):
 
 def build(stacked, today=None):
     grid = json.loads((DATA / "portrait.json").read_text())["grid"]
-    stats = json.loads((DATA / "stats.json").read_text())
-    info = [spans(l) for l in readout(stats, today or date.today())]
+    info = [spans(l) for l in readout()]
     frames = motion.frames(grid)
     m = Mono()
     p = "n" if stacked else "c"
@@ -192,7 +180,7 @@ def build(stacked, today=None):
         W = 420
         art_x, art_y = (W - art_w) / 2, 22
         info_size = (W - 40) / (INFO_COLS * 0.6)        # 66 columns across the narrow card
-        info_lead = info_size * 16 / 11
+        info_lead = info_size * 17 / 12
         info_x = (W - m.width(INFO_COLS, info_size)) / 2
         info_y = art_y + len(grid) * ART_LEAD + 22
         voice_x = info_x

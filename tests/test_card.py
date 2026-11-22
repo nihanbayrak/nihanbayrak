@@ -11,51 +11,43 @@ STATS = {"created": "2017-09-26", "repos": 17, "contributed": 1, "stars": 2, "fo
 DAY = date(2026, 11, 22)
 
 
+TEXT = """nihan: Profile
+
+role: AI specialist
+dayJob: AI tools for consumer brands
+city: Berlin
+spokenLanguages: TR, EN, DE
+
+tools.languages: Python, TypeScript, SQL
+tools.ide: Claude Code, Xcode, Codex, VS Code, Langdock
+tools.shell: zsh
+
+interests.creative: 3D modeling and printing
+interests.offScreen: Modeling, sailing, creating gifts
+
+building: Projects
+
+evals: Copyright risk in image prompts
+agents: Roundtrip · TestFlight feedback triage
+product: Conscious Eyes · iOS label scanner
+
+contact: Contact
+
+linkedIn: nihan-bayrak
+website: consciouseyes.app"""
+
+
 class Readout(unittest.TestCase):
-    def test_readout_copy(self):
-        # Nihan's own list, 22 Nov, plus the two live lines she chose to keep.
-        self.assertEqual(neofetch.readout(STATS, DAY), [
-            ("title", "nihan@bayrak"),
-            ("section", "Profile"),
-            ("pair", "role", "AI specialist"),
-            ("pair", "dayJob", "AI tools for consumer brands"),
-            ("pair", "city", "Berlin"),
-            ("pair", "spokenLanguages", "TR, EN, DE"),
-            ("pair", "uptime", "9 years, 1 month, 27 days"),
-            ("blank",),
-            ("pair", "tools.languages", "Python, TypeScript, SQL"),
-            ("pair", "tools.ide", "Claude Code, Xcode, Codex, VS Code, Langdock"),
-            ("pair", "tools.shell", "zsh"),
-            ("blank",),
-            ("pair", "interests.creative", "3D modeling and printing"),
-            ("pair", "interests.offScreen", "Modeling, sailing, creating gifts"),
-            ("blank",),
-            ("section", "Projects"),
-            ("pair", "evals", "Copyright risk in image prompts"),
-            ("pair", "agents", "Roundtrip · TestFlight feedback triage"),
-            ("pair", "product", "Conscious Eyes · iOS label scanner"),
-            ("blank",),
-            ("section", "Contact"),
-            ("pair", "linkedIn", "nihan-bayrak"),
-            ("pair", "website", "consciouseyes.app"),
-            ("blank",),
-            ("section", "GitHub"),
-            ("pair", "commits", "441 · repos 17 · followers 28"),
-        ])
+    def test_the_card_says_exactly_my_text(self):
+        # Written by me, 22 Nov. Line for line, no leaders, no rules, no live lines.
+        rendered = "\n".join("".join(t for t, _ in neofetch.spans(line)) for line in neofetch.readout())
+        self.assertEqual(rendered, TEXT)
 
-    def test_pairs_line_up_as_approved(self):
-        spans = neofetch.spans(("pair", "role", "AI specialist"))
-        self.assertEqual("".join(t for t, _ in spans), "role ................ AI specialist")
-        spans = neofetch.spans(("pair", "interests.offScreen", "Modeling, sailing, creating gifts"))
-        self.assertEqual("".join(t for t, _ in spans), "interests.offScreen . Modeling, sailing, creating gifts")
+    def test_every_line_fits(self):
+        for line in neofetch.readout():
+            self.assertLessEqual(sum(len(t) for t, _ in neofetch.spans(line)), neofetch.INFO_COLS, line)
 
-    def test_every_line_fits_even_with_big_numbers(self):
-        # Through spans(), so a change to the layout cannot slip past this test.
-        big = dict(STATS, commits=123456, repos=999, followers=99999)
-        for row in neofetch.readout(big, date(2027, 9, 25)) + [("pair", "uptime", "10 years, 11 months, 30 days")]:
-            self.assertLessEqual(sum(len(t) for t, _ in neofetch.spans(row)), neofetch.INFO_COLS, row)
-
-    def test_readout_and_motto_fit_left_of_the_portrait(self):
+    def test_readout_fits_left_of_the_portrait(self):
         self.assertLessEqual(24 + neofetch.Mono().width(neofetch.INFO_COLS, neofetch.INFO_SIZE), 462)
 
 
