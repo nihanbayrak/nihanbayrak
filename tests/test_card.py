@@ -54,6 +54,15 @@ class Card(unittest.TestCase):
             for banned in ("WIN", "Creating Images", "spy", "FR"):
                 self.assertNotIn(banned, svg)
 
+    def test_wide_card_is_flipped(self):
+        # Readout and mottos on the left, her face on the right (Nihan's pick "B", 22 Nov).
+        svg = neofetch.build(False, today=DAY)
+        for there in ('translate(470.0 ', 'translate(24.0 ', 'translate(24.00 ', 'x="24"', "transform-origin:24px 0"):
+            self.assertIn(there, svg)
+        self.assertNotIn("translate(384.", svg)
+        self.assertLess(24 + neofetch.Mono().width(neofetch.INFO_COLS, neofetch.INFO_SIZE), 470)
+        self.assertLess(24 + max(neofetch.typeset.measure(m, "voice", 19) for m in neofetch.MOTTOS), 470)
+
     def test_alt_text(self):
         self.assertIn('aria-label="Nihan Bayrak as a moving terminal readout: her portrait drawn in signs '
                       'beside her details. Berlin."', neofetch.build(False, today=DAY))

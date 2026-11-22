@@ -169,8 +169,9 @@ def build(stacked, today=None):
     art_w = m.width(len(grid[0]), ART_SIZE)
     if not stacked:
         W, H = 830, 420
-        art_x, art_y, info_x, info_y = 20, 22, 384, 40
-        voice_x, voice_y, voice_size = 384, 372, VOICE_SIZE
+        # readout and mottos on the left, her face on the right, looking into the page
+        art_x, art_y, info_x, info_y = 470, 22, 24, 40
+        voice_x, voice_y, voice_size = 24, 372, VOICE_SIZE
     else:
         W = 420
         art_x, art_y = (W - art_w) / 2, 22
