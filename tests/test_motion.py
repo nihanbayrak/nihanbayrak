@@ -24,22 +24,18 @@ class Flipbook(unittest.TestCase):
         for i in range(8000):
             self.assertEqual(len(motion.visible_frames(css, i / 8000)), 1, i)
 
-    def test_frames_deterministic_and_glitch_only_on_3_and_6(self):
+    def test_frames_deterministic_and_steady(self):
+        # No glitch: in every frame, no sign lands where she isn't (Nihan, 22 Nov).
         a, b = motion.frames(GRID), motion.frames(GRID)
         self.assertEqual(a, b)
         self.assertEqual(len(a), 8)
         self.assertEqual(len(a[0]), 42)
         self.assertEqual(len(a[0][0]), 66)
-        for k in (0, 1, 2, 4, 5, 7):
+        for k in range(8):
             for r in range(42):
                 for c in range(66):
                     if GRID[r][c] == 0:
                         self.assertEqual(a[k][r][c], " ", (k, r, c))
-        for k in (3, 6):
-            # a sign landing where she isn't can only come from the band sliding sideways
-            moved = [r for r in range(42) if any(GRID[r][c] == 0 and a[k][r][c] != " " for c in range(66))]
-            self.assertTrue(moved, k)
-            self.assertLessEqual(moved[-1] - moved[0], 2, (k, moved))
 
     def test_signs_come_from_the_ramp(self):
         self.assertEqual(motion.RAMP, " .,:;i1tfLCG08@")
