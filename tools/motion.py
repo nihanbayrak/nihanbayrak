@@ -1,7 +1,7 @@
 """Every rule the card moves by, as plain functions, so it can be tested without a browser.
 
 The portrait is a flipbook: eight frames of the same face, re-inked with fresh jitter so
-the signs shimmer; frames 3 and 6 also slide a three-row band sideways, a signal glitch.
+the signs shimmer. (A sideways glitch on two frames read as the face flipping; it is gone.)
 The mottos type out under a mask that steps from one letter's right edge to the next.
 
 Two rules here were wrong in the first mockup and are the reason this file exists:
@@ -20,7 +20,6 @@ RAMP = " .,:;i1tfLCG08@"
 N_FRAMES = 8
 FLIP_S = 1.6
 CYCLE_S = 18
-GLITCH = (3, 6)
 TYPE_END, HOLD_END, ERASE_END = 12, 28, 32     # percent of the motto loop
 
 
@@ -42,10 +41,6 @@ def frames(grid, seed=11):
                 v = min(1.0, max(0.0, b + rng.uniform(-0.09, 0.09))) if b > 0.02 else 0.0
                 signs.append(RAMP[int(v * (len(RAMP) - 1) + 0.5)])
             lines.append("".join(signs))
-        if k in GLITCH:
-            r0, shift = rng.randrange(8, rows - 8), rng.choice((-3, -2, 2, 3))
-            for r in range(r0, r0 + 3):
-                lines[r] = lines[r][-shift:] + lines[r][:-shift]
         out.append(lines)
     return out
 
