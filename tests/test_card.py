@@ -13,28 +13,50 @@ DAY = date(2026, 11, 22)
 
 class Readout(unittest.TestCase):
     def test_readout_copy(self):
+        # Nihan's own list, 22 Nov, plus the two live lines she chose to keep.
         self.assertEqual(neofetch.readout(STATS, DAY), [
             ("title", "nihan@bayrak"),
-            ("pair", "Based", "Berlin · TR, EN, DE"),
-            ("pair", "Uptime", "9 years, 1 month, 27 days"),
-            ("pair", "Kernel", "Evals, agents, honest interfaces"),
-            ("pair", "Shell", "Claude Code, zsh"),
+            ("section", "Profile"),
+            ("pair", "role", "AI specialist"),
+            ("pair", "dayJob", "AI tools for consumer brands"),
+            ("pair", "city", "Berlin"),
+            ("pair", "spokenLanguages", "TR, EN, DE"),
+            ("pair", "uptime", "9 years, 1 month, 27 days"),
             ("blank",),
-            ("section", "Now"),
-            ("pair", "Measuring", "Can an LLM judge copyright risk?"),
-            ("pair", "Designing", "Conscious Eyes: the label, at a glance"),
-            ("pair", "Guarding", "Prompt-injection scans for chat logs"),
+            ("pair", "tools.languages", "Python, TypeScript, SQL"),
+            ("pair", "tools.ide", "Claude Code, Xcode, Codex, VS Code, Langdock"),
+            ("pair", "tools.shell", "zsh"),
+            ("blank",),
+            ("pair", "interests.creative", "3D modeling and printing"),
+            ("pair", "interests.offScreen", "Modeling, sailing, creating gifts"),
+            ("blank",),
+            ("section", "Projects"),
+            ("pair", "evals", "Copyright risk in image prompts"),
+            ("pair", "agents", "Roundtrip · TestFlight feedback triage"),
+            ("pair", "product", "Conscious Eyes · iOS label scanner"),
+            ("blank",),
+            ("section", "Contact"),
+            ("pair", "linkedIn", "nihan-bayrak"),
+            ("pair", "website", "consciouseyes.app"),
             ("blank",),
             ("section", "GitHub"),
-            ("pair", "Commits", "441 · Repos 17 · Followers 28"),
+            ("pair", "commits", "441 · repos 17 · followers 28"),
         ])
 
-    def test_big_numbers_and_long_uptime_fit(self):
+    def test_pairs_line_up_as_approved(self):
+        spans = neofetch.spans(("pair", "role", "AI specialist"))
+        self.assertEqual("".join(t for t, _ in spans), "role ................ AI specialist")
+        spans = neofetch.spans(("pair", "interests.offScreen", "Modeling, sailing, creating gifts"))
+        self.assertEqual("".join(t for t, _ in spans), "interests.offScreen . Modeling, sailing, creating gifts")
+
+    def test_every_line_fits_even_with_big_numbers(self):
+        # Through spans(), so a change to the layout cannot slip past this test.
         big = dict(STATS, commits=123456, repos=999, followers=99999)
-        rows = neofetch.readout(big, date(2027, 9, 25)) + [("pair", "Uptime", "10 years, 11 months, 30 days")]
-        for row in rows:
-            if row[0] == "pair":
-                self.assertLessEqual(len(row[1]) + 1 + (12 - len(row[1])) + 1 + len(row[2]), 52, row)
+        for row in neofetch.readout(big, date(2027, 9, 25)) + [("pair", "uptime", "10 years, 11 months, 30 days")]:
+            self.assertLessEqual(sum(len(t) for t, _ in neofetch.spans(row)), neofetch.INFO_COLS, row)
+
+    def test_readout_and_motto_fit_left_of_the_portrait(self):
+        self.assertLessEqual(24 + neofetch.Mono().width(neofetch.INFO_COLS, neofetch.INFO_SIZE), 462)
 
 
 class Card(unittest.TestCase):
@@ -60,7 +82,6 @@ class Card(unittest.TestCase):
         for there in ('translate(470.0 ', 'translate(24.0 ', 'translate(24.00 ', 'x="24"', "transform-origin:24px 0"):
             self.assertIn(there, svg)
         self.assertNotIn("translate(384.", svg)
-        self.assertLess(24 + neofetch.Mono().width(neofetch.INFO_COLS, neofetch.INFO_SIZE), 470)
         self.assertLess(24 + max(neofetch.typeset.measure(m, "voice", 19) for m in neofetch.MOTTOS), 470)
 
     def test_alt_text(self):

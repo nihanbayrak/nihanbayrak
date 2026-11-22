@@ -28,9 +28,9 @@ DATA = ROOT / "data"
 GROUND, MID, PALE = "#0B3B2E", "#4FA383", "#D3F2E4"
 ROLES = {"text": PALE, "key": MID, "dots": MID, "value": PALE}
 RULE = "─"
-INFO_COLS, KEY_COLS = 52, 12
+INFO_COLS, KEY_COLS = 66, 20      # values start at column 22
 ART_SIZE, ART_LEAD = 8.6, 9.2
-INFO_SIZE, INFO_LEAD = 12, 22
+INFO_SIZE, INFO_LEAD = 11, 16
 VOICE_SIZE = 19
 ALT = "Nihan Bayrak as a moving terminal readout: her portrait drawn in signs beside her details. Berlin."
 MOTTOS = [
@@ -55,21 +55,35 @@ def uptime(since, today):
 
 
 def readout(stats, today):
-    """Lines of the readout. A pair is ('pair', key, value). Words are hers; keep them."""
+    """Lines of the readout. A pair is ('pair', key, value). Her words, her keys; keep them.
+    uptime and the GitHub line are the two live lines the nightly redraw updates."""
     return [
         ("title", "nihan@bayrak"),
-        ("pair", "Based", "Berlin · TR, EN, DE"),
-        ("pair", "Uptime", uptime(date.fromisoformat(stats["created"]), today)),
-        ("pair", "Kernel", "Evals, agents, honest interfaces"),
-        ("pair", "Shell", "Claude Code, zsh"),
+        ("section", "Profile"),
+        ("pair", "role", "AI specialist"),
+        ("pair", "dayJob", "AI tools for consumer brands"),
+        ("pair", "city", "Berlin"),
+        ("pair", "spokenLanguages", "TR, EN, DE"),
+        ("pair", "uptime", uptime(date.fromisoformat(stats["created"]), today)),
         ("blank",),
-        ("section", "Now"),
-        ("pair", "Measuring", "Can an LLM judge copyright risk?"),
-        ("pair", "Designing", "Conscious Eyes: the label, at a glance"),
-        ("pair", "Guarding", "Prompt-injection scans for chat logs"),
+        ("pair", "tools.languages", "Python, TypeScript, SQL"),
+        ("pair", "tools.ide", "Claude Code, Xcode, Codex, VS Code, Langdock"),
+        ("pair", "tools.shell", "zsh"),
+        ("blank",),
+        ("pair", "interests.creative", "3D modeling and printing"),
+        ("pair", "interests.offScreen", "Modeling, sailing, creating gifts"),
+        ("blank",),
+        ("section", "Projects"),
+        ("pair", "evals", "Copyright risk in image prompts"),
+        ("pair", "agents", "Roundtrip · TestFlight feedback triage"),
+        ("pair", "product", "Conscious Eyes · iOS label scanner"),
+        ("blank",),
+        ("section", "Contact"),
+        ("pair", "linkedIn", "nihan-bayrak"),
+        ("pair", "website", "consciouseyes.app"),
         ("blank",),
         ("section", "GitHub"),
-        ("pair", "Commits", f'{stats["commits"]:,} · Repos {stats["repos"]} · Followers {stats["followers"]}'),
+        ("pair", "commits", f'{stats["commits"]:,} · repos {stats["repos"]} · followers {stats["followers"]}'),
     ]
 
 
@@ -168,21 +182,26 @@ def build(stacked, today=None):
     p = "n" if stacked else "c"
     art_w = m.width(len(grid[0]), ART_SIZE)
     if not stacked:
-        W, H = 830, 420
         # readout and mottos on the left, her face on the right, looking into the page
-        art_x, art_y, info_x, info_y = 470, 22, 24, 40
-        voice_x, voice_y, voice_size = 24, 372, VOICE_SIZE
+        info_x, info_y = 24, 38
+        voice_x, voice_size = 24, VOICE_SIZE
+        voice_y = info_y + len(info) * INFO_LEAD + 22
+        W, H = 830, round(voice_y + 30)
+        art_x, art_y = 470, (H - len(grid) * ART_LEAD) / 2 + 6
     else:
         W = 420
         art_x, art_y = (W - art_w) / 2, 22
-        info_x = (W - m.width(INFO_COLS, INFO_SIZE)) / 2
+        info_size = (W - 40) / (INFO_COLS * 0.6)        # 66 columns across the narrow card
+        info_lead = info_size * 16 / 11
+        info_x = (W - m.width(INFO_COLS, info_size)) / 2
         info_y = art_y + len(grid) * ART_LEAD + 22
         voice_x = info_x
         voice_size = min(typeset.fit(t, "voice", VOICE_SIZE, W - 2 * info_x) for t in MOTTOS)
-        voice_y = info_y + len(info) * INFO_LEAD + 26
+        voice_y = info_y + len(info) * info_lead + 26
         H = round(voice_y + 26)
     art = portrait(m, frames, art_x, art_y, p)
-    lines = "".join(m.line(info_x, info_y + r * INFO_LEAD, INFO_SIZE, runs) for r, runs in enumerate(info) if runs)
+    size, lead = (info_size, info_lead) if stacked else (INFO_SIZE, INFO_LEAD)
+    lines = "".join(m.line(info_x, info_y + r * lead, size, runs) for r, runs in enumerate(info) if runs)
     mask_defs, voice, voice_css = mottos(voice_x, voice_y, voice_size, p)
     style = motion.flip_css(p) + voice_css + motion.still_css(p)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
