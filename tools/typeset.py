@@ -15,10 +15,6 @@ from fontTools.varLib import instancer
 FONTS = Path(__file__).parent / "fonts"
 
 FACES = {
-    "display": ("CormorantInfant.ttf", {"wght": 300}),   # Cormorant Infant Light — the character
-    "display_med": ("CormorantInfant.ttf", {"wght": 500}),
-    "fact": ("ArchivoNarrow.ttf", {"wght": 500}),        # Archivo Narrow — small-caps metadata
-    "fact_bold": ("ArchivoNarrow.ttf", {"wght": 700}),
     "mono": ("JetBrainsMono.ttf", {"wght": 400}),
     "mono_bold": ("JetBrainsMono.ttf", {"wght": 700}),
     "mono_light": ("JetBrainsMono.ttf", {"wght": 200}),
