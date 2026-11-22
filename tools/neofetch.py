@@ -1,37 +1,43 @@
-"""The profile card: a portrait in signs beside a neofetch readout of her.
+"""The profile card: her portrait in signs beside a neofetch readout, moving.
 
-Left, data/portrait.txt (tools/portrait.py). Right, key and value pairs joined by
-leader dots, the way a terminal system-info tool prints a machine, with the
-GitHub numbers from data/stats.json (tools/stats.py) at the foot. Uptime counts
-from the day the GitHub account opened.
+Left, the portrait from data/portrait.json (tools/portrait.py), re-inked as an eight-frame
+flipbook. Right, key and value pairs joined by leader dots, the way a terminal system-info
+tool prints a machine, with the GitHub numbers from data/stats.json (tools/stats.py) at
+the foot. Under it, three mottos type themselves out in turn. Uptime counts from the day
+the GitHub account opened. Every animation rule lives in tools/motion.py.
 
-All type is JetBrains Mono, as outlines: a README image cannot load a font, and a
-terminal card that falls back to Times is not a terminal card. Each glyph is drawn
-once and placed by column. Light and dark versions, and a stacked cut for phones.
+One deep green, painted by the card itself, so it is the same on GitHub's light and dark
+themes. All type is outlines — JetBrains Mono, and Fraunces italic for the mottos — since
+a README image cannot load a font. Each glyph is drawn once and placed with <use>.
 
-    python tools/neofetch.py     # writes assets/card-{light,dark}{,-narrow}.svg
+    python tools/neofetch.py     # writes assets/card.svg and assets/card-narrow.svg
+
+Design: docs/superpowers/specs/2026-11-22-living-card-design.md
 """
 import json
 from datetime import date
 from pathlib import Path
 
+import motion
 import typeset
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 DATA = ROOT / "data"
 
-FACE, SIZE, LEAD = "mono", 15, 19
-INFO_COLS = 60
-PAD_X, PAD_Y = 22, 20
+GROUND, MID, PALE = "#0B3B2E", "#4FA383", "#D3F2E4"
+ROLES = {"text": PALE, "key": MID, "dots": MID, "value": PALE}
 RULE = "─"
-
-PALETTES = {
-    "light": dict(bg="#f6f8fa", text="#24292f", key="#953800", value="#0a3069",
-                  dots="#afb8c1", add="#1a7f37", sub="#cf222e", art="#24292f"),
-    "dark": dict(bg="#161b22", text="#c9d1d9", key="#ffa657", value="#a5d6ff",
-                 dots="#484f58", add="#3fb950", sub="#f85149", art="#c9d1d9"),
-}
+INFO_COLS, KEY_COLS = 52, 12
+ART_SIZE, ART_LEAD = 8.6, 9.2
+INFO_SIZE, INFO_LEAD = 12, 22
+VOICE_SIZE = 19
+ALT = "Nihan Bayrak as a moving terminal readout: her portrait drawn in signs beside her details. Berlin."
+MOTTOS = [
+    "Engineering with an editor's eye.",
+    "I speak Python, fashion and three human languages.",
+    "Where the model meets the moodboard.",
+]
 
 
 # ---------------------------------------------------------------- content
@@ -49,82 +55,37 @@ def uptime(since, today):
 
 
 def readout(stats, today):
-    """Lines of (text, role) spans. A pair is ('pair', key, value)."""
-    up = uptime(date.fromisoformat(stats["created"]), today)
-    net = stats["added"] - stats["deleted"]
+    """Lines of the readout. A pair is ('pair', key, value). Words are hers; keep them."""
     return [
         ("title", "nihan@bayrak"),
-        ("pair", "OS", "macOS 26, iOS 27"),
-        ("pair", "Uptime", up),
-        ("pair", "Host", "WIN Creating Images, Berlin"),
-        ("pair", "Kernel", "Harness engineer"),
-        ("pair", "IDE", "Claude Code, Xcode"),
-        ("pair", "Shell", "zsh"),
+        ("pair", "Based", "Berlin · TR, EN, DE"),
+        ("pair", "Uptime", uptime(date.fromisoformat(stats["created"]), today)),
+        ("pair", "Kernel", "Evals, agents, honest interfaces"),
+        ("pair", "Shell", "Claude Code, zsh"),
         ("blank",),
-        ("pair", "Languages.Programming", "Python, TypeScript, JavaScript"),
-        ("pair", "Languages.Computer", "HTML, CSS, SVG, JSON, YAML"),
+        ("section", "Now"),
+        ("pair", "Measuring", "Can an LLM judge copyright risk?"),
+        ("pair", "Designing", "Conscious Eyes: the label, at a glance"),
+        ("pair", "Guarding", "Prompt-injection scans for chat logs"),
         ("blank",),
-        ("pair", "Hobbies.Software", "3D rendering, generative video"),
-        ("pair", "Hobbies.Real", "Fashion, design, puzzles"),
-        ("blank",),
-        ("section", "Building"),
-        ("pair", "Agents", "Roundtrip"),
-        ("pair", "Product", "Conscious Eyes, iOS"),
-        ("blank",),
-        ("section", "Contact"),
-        ("pair", "LinkedIn", "nihan-bayrak"),
-        ("pair", "Website", "consciouseyes.app"),
-        ("blank",),
-        ("section", "GitHub Stats"),
-        ("pairs", ("Repos", f'{stats["repos"]} {{Contributed: {stats["contributed"]}}}'),
-                  ("Stars", f'{stats["stars"]:,}')),
-        ("pairs", ("Commits", f'{stats["commits"]:,}'), ("Followers", f'{stats["followers"]:,}')),
-        ("loc", f"{net:,}", f'{stats["added"]:,}', f'{stats["deleted"]:,}'),
+        ("section", "GitHub"),
+        ("pair", "Commits", f'{stats["commits"]:,} · Repos {stats["repos"]} · Followers {stats["followers"]}'),
     ]
 
 
-def spans(line, width):
-    """A readout line as [(text, role)], exactly `width` columns or less."""
+def spans(line):
+    """A readout line as [(text, role)], INFO_COLS columns or fewer."""
     kind = line[0]
     if kind == "title":
-        return [(line[1], "text"), (" ", "text"), (RULE * (width - len(line[1]) - 1), "dots")]
+        return [(line[1] + " ", "text"), (RULE * (INFO_COLS - len(line[1]) - 1), "dots")]
     if kind == "section":
-        head = f"{RULE} {line[1]} "
-        return [(RULE + " ", "dots"), (line[1], "text"), (" " + RULE * (width - len(head)), "dots")]
+        return [(RULE + " ", "dots"), (line[1], "text"), (" " + RULE * (INFO_COLS - len(line[1]) - 3), "dots")]
     if kind == "blank":
-        return [(".", "dots")]
+        return []
     if kind == "pair":
-        return _pair(line[1], line[2], width)
-    if kind == "pairs":
-        (k1, v1), (k2, v2) = line[1], line[2]
-        right = 22
-        left = _pair(k1, v1, width - right - 3)
-        return left + [(" | ", "dots")] + _pair(k2, v2, right, lead="")
-    if kind == "loc":
-        net, add, sub = line[1:]
-        out = _key(". ", "Lines of Code on GitHub") + [(": ", "dots")]
-        tail = [(net, "value"), (" ( ", "dots"), (f"{add}++", "add"), (", ", "dots"),
-                (f"{sub}--", "sub"), (" )", "dots")]
-        used = sum(len(t) for t, _ in out + tail)
-        return out + [("." * max(width - used - 1, 1) + " ", "dots")] + tail
+        key, value = line[1], line[2]
+        return [(key, "key"), (" " + "." * (KEY_COLS - len(key)), "dots"), (" " + value, "value")]
     raise ValueError(kind)
-
-
-def _key(lead, key):
-    """'Languages.Programming' keeps its dot in the text colour, as a terminal would."""
-    out = [(lead, "dots")] if lead else []
-    parts = key.split(".")
-    for i, p in enumerate(parts):
-        out.append((p, "key"))
-        if i < len(parts) - 1:
-            out.append((".", "text"))
-    return out
-
-
-def _pair(key, value, width, lead=". "):
-    head = _key(lead, key) + [(": ", "dots")]
-    used = sum(len(t) for t, _ in head) + len(value) + 1
-    return head + [("." * max(width - used, 1) + " ", "dots"), (value, "value")]
 
 
 # ---------------------------------------------------------------- drawing
@@ -133,7 +94,7 @@ class Mono:
     """Outlined monospace: each glyph drawn once, placed by column."""
 
     def __init__(self):
-        self.tt, self.glyphset, _, self.upem = typeset._load(FACE)
+        self.tt, self.glyphset, _, self.upem = typeset._load("mono")
         self.cmap = self.tt.getBestCmap()
         self.adv = self.tt["hmtx"][self.cmap[ord("M")]][0]
         self.ids, self.defs = {}, []
@@ -151,67 +112,94 @@ class Mono:
             self.ids[ch] = gid
         return self.ids[ch]
 
-    def line(self, x, y, runs, colours):
-        """runs: [(text, role)] from column 0. One group per line, one per colour."""
-        s = SIZE / self.upem
-        by_colour, col = {}, 0
+    def line(self, x, y, size, runs, colours=ROLES):
+        """runs: [(text, role)] from column 0. One group per role.
+
+        In a key/value pair the leader dots are dimmed; the rules of the title and the
+        section heads are not.
+        """
+        s = size / self.upem
+        groups, col = {}, 0
         for text, role in runs:
             for ch in text:
                 gid = self.ref(ch)
                 if gid:
-                    by_colour.setdefault(colours[role], []).append(f'<use xlink:href="#{gid}" x="{col * self.adv}"/>')
+                    groups.setdefault(role, []).append(f'<use href="#{gid}" x="{col * self.adv}"/>')
                 col += 1
-        inner = "".join(f'<g fill="{c}">{"".join(u)}</g>' for c, u in by_colour.items())
+        leaders = any(role == "key" for _, role in runs)
+        inner = ""
+        for role, uses in groups.items():
+            dim = ' opacity=".6"' if leaders and role == "dots" else ""
+            inner += f'<g fill="{colours[role]}"{dim}>{"".join(uses)}</g>'
         return f'<g transform="translate({x:.1f} {y:.1f}) scale({s:.5f} {-s:.5f})">{inner}</g>'
 
-    def cols(self, n):
-        return n * self.adv * SIZE / self.upem
+    def width(self, cols, size):
+        return cols * self.adv * size / self.upem
 
 
-def build(theme, stacked, today=None):
-    pal = PALETTES[theme]
-    art = (DATA / "portrait.txt").read_text().rstrip("\n").split("\n")
+def portrait(m, frames, x, y, p):
+    out = []
+    for k, rows in enumerate(frames):
+        lines = "".join(m.line(x, y + r * ART_LEAD, ART_SIZE, [(row, "art")], {"art": PALE})
+                        for r, row in enumerate(rows) if row.strip())
+        out.append(f'<g class="{p}f{k}">{lines}</g>')
+    return "".join(out)
+
+
+def mottos(x, y, size, p):
+    """Each motto outlined under its own mask; the mask's rect is what motion animates."""
+    defs, body, css = [], [], []
+    for j, text in enumerate(MOTTOS):
+        adv = typeset.advances(text, "voice", size)
+        edges, width = [0] + [a + 1.5 for a in adv], adv[-1] + 2
+        defs.append(f'<mask id="{p}m{j}"><rect class="{p}v{j}" x="{x}" y="{y - size:.1f}" '
+                    f'width="{width:.2f}" height="{size * 1.5:.1f}" fill="#fff"/></mask>')
+        body.append(f'<g mask="url(#{p}m{j})">{typeset.text(text, "voice", size, x, y, PALE)}</g>')
+        css.append(motion.type_css(p, j, edges, width, x))
+    return "".join(defs), "".join(body), "".join(css)
+
+
+def build(stacked, today=None):
+    grid = json.loads((DATA / "portrait.json").read_text())["grid"]
     stats = json.loads((DATA / "stats.json").read_text())
-    info = [spans(l, INFO_COLS) for l in readout(stats, today or date.today())]
-    art_cols = max(len(l) for l in art)
+    info = [spans(l) for l in readout(stats, today or date.today())]
+    frames = motion.frames(grid)
     m = Mono()
-    body = []
+    p = "n" if stacked else "c"
+    art_w = m.width(len(grid[0]), ART_SIZE)
     if not stacked:
-        info_x = PAD_X + m.cols(art_cols + 3)
-        rows = max(len(art), len(info))
-        art_top = PAD_Y + (rows - len(art)) * LEAD / 2
-        info_top = PAD_Y + (rows - len(info)) * LEAD / 2
-        for r, l in enumerate(art):
-            body.append(m.line(PAD_X, art_top + r * LEAD + SIZE * .8, [(l, "art")], pal))
-        for r, runs in enumerate(info):
-            body.append(m.line(info_x, info_top + r * LEAD + SIZE * .8, runs, pal))
-        W = round(info_x + m.cols(INFO_COLS) + PAD_X)
-        H = round(PAD_Y * 2 + rows * LEAD)
+        W, H = 830, 420
+        art_x, art_y, info_x, info_y = 20, 22, 384, 40
+        voice_x, voice_y, voice_size = 384, 372, VOICE_SIZE
     else:
-        W = round(PAD_X * 2 + m.cols(INFO_COLS))
-        art_x = (W - m.cols(art_cols)) / 2
-        for r, l in enumerate(art):
-            body.append(m.line(art_x, PAD_Y + r * LEAD + SIZE * .8, [(l, "art")], pal))
-        top = PAD_Y + (len(art) + 1) * LEAD
-        for r, runs in enumerate(info):
-            body.append(m.line(PAD_X, top + r * LEAD + SIZE * .8, runs, pal))
-        H = round(top + len(info) * LEAD + PAD_Y)
-    alt = ("Nihan Bayrak, as a terminal readout: a portrait drawn in signs beside her details. "
-           "Harness engineer at WIN Creating Images, Berlin. "
-           f'{stats["repos"]} public repos, {stats["commits"]:,} commits, '
-           f'{stats["added"] - stats["deleted"]:,} lines of code on GitHub.')
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
-            f'width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="{alt}">'
-            f'<title>nihan@bayrak</title><defs>{"".join(m.defs)}</defs>'
-            f'<rect width="{W}" height="{H}" rx="14" fill="{pal["bg"]}"/>{"".join(body)}</svg>')
+        W = 420
+        art_x, art_y = (W - art_w) / 2, 22
+        info_x = (W - m.width(INFO_COLS, INFO_SIZE)) / 2
+        info_y = art_y + len(grid) * ART_LEAD + 22
+        voice_x = info_x
+        voice_size = min(typeset.fit(t, "voice", VOICE_SIZE, W - 2 * info_x) for t in MOTTOS)
+        voice_y = info_y + len(info) * INFO_LEAD + 26
+        H = round(voice_y + 26)
+    art = portrait(m, frames, art_x, art_y, p)
+    lines = "".join(m.line(info_x, info_y + r * INFO_LEAD, INFO_SIZE, runs) for r, runs in enumerate(info) if runs)
+    mask_defs, voice, voice_css = mottos(voice_x, voice_y, voice_size, p)
+    style = motion.flip_css(p) + voice_css + motion.still_css(p)
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
+            f'role="img" aria-label="{ALT}"><title>nihan@bayrak</title>'
+            f'<style>{style}</style>'
+            f'<defs>{"".join(m.defs)}{mask_defs}'
+            f'<filter id="{p}g"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/>'
+            f'<feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0"/></filter></defs>'
+            f'<rect width="{W}" height="{H}" rx="10" fill="{GROUND}"/>{art}{lines}{voice}'
+            f'<rect width="{W}" height="{H}" rx="10" filter="url(#{p}g)" opacity=".08" style="mix-blend-mode:screen"/>'
+            f'</svg>')
 
 
 def main():
-    for theme in PALETTES:
-        for stacked in (False, True):
-            out = ASSETS / (f"card-{theme}" + ("-narrow" if stacked else "") + ".svg")
-            out.write_text(build(theme, stacked))
-            print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
+    for stacked, name in ((False, "card.svg"), (True, "card-narrow.svg")):
+        out = ASSETS / name
+        out.write_text(build(stacked))
+        print(f"  {out.name}  {out.stat().st_size / 1024:.0f} KB")
 
 
 if __name__ == "__main__":

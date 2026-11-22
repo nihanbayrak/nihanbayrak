@@ -1,54 +1,67 @@
-"""Turns a photo into the portrait on the card: signs only, no letters.
+"""Turns a photo into the portrait on the card: a grid of brightness, no picture.
 
-    python tools/portrait.py PHOTO [--box x0,y0,x1,y1] [--cols 46]
+    python tools/portrait.py PHOTO [--box x0,y0,x1,y1]
 
-Writes data/portrait.txt. The photo itself never enters the repo; only the
-characters do. The wall behind her is dropped by colour (hair, skin and clothes
-are all more saturated than a grey wall), the face is equalised inside that mask
-so its features carry, and edges are darkened so the outline reads at 46 columns.
+Writes data/portrait.json, 42 rows by 66 columns, brightness 0..1 to two decimals.
+The photo itself never enters the repo, and neither does its mask: both stay in a
+temporary folder. Mac only — she is cut out with Apple's on-device person
+segmentation (tools/segment.swift), which drops the wall and anyone behind her far
+better than a colour key did. Inside that mask the face is contrast-stretched and
+sharpened so the eyes, nose and lips carry at 66 columns.
+
+The default box is the approved crop of the 22 Nov photo (1500 x 2000): face and
+hair, square. It is scaled for photos of another size.
 """
 import argparse
+import json
+import subprocess
+import tempfile
 from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageFilter, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "data" / "portrait.txt"
+OUT = ROOT / "data" / "portrait.json"
+SEGMENT = Path(__file__).resolve().parent / "segment.swift"
+COLS, ROWS = 66, 42
+BOX = (300, 120, 1150, 970)
 
-RAMP = " .`',:;-~+=*%#&$@"      # light to dense; signs only
-CELL = 0.5                      # a monospace cell is about half as wide as it is tall
+
+def brightness(photo, mask, box, cols, rows):
+    """Brightness 0..1 per cell, zero outside her. `mask` is 0..255, same size as `photo`."""
+    photo, mask = photo.crop(box), mask.crop(box)
+    m = np.asarray(mask.resize((cols, rows), Image.BOX), dtype=float) / 255
+    m = np.clip((m - 0.45) / 0.25, 0, 1)            # faint people in the background fall to 0
+    grey = ImageOps.autocontrast(ImageOps.grayscale(photo), cutoff=(2, 1),
+                                 mask=mask.point(lambda v: 255 if v > 140 else 0))
+    grey = grey.filter(ImageFilter.UnsharpMask(8, 220, 1))
+    b = (np.asarray(grey.resize((cols, rows), Image.BOX), dtype=float) / 255) ** 1.7 * m
+    return [[round(float(v), 2) for v in row] for row in b]
 
 
-def portrait(photo, box, cols, edge=0.45, gamma=1.3):
-    rgb = Image.open(photo).convert("RGB").crop(box)
-    hsv = np.asarray(rgb.convert("HSV")).astype(float) / 255
-    person = ((hsv[..., 1] > 0.14) | (hsv[..., 2] < 0.5)).astype(np.uint8) * 255
-    mask = Image.fromarray(person).filter(ImageFilter.MedianFilter(9)).filter(ImageFilter.MaxFilter(7))
-    grey = ImageOps.equalize(rgb.convert("L"), mask=mask)
-
-    w, h = grey.size
-    rows = round(cols * h / w * CELL)
-    tone = np.asarray(grey.resize((cols, rows), Image.LANCZOS)).astype(float) / 255
-    edges = grey.filter(ImageFilter.FIND_EDGES).filter(ImageFilter.MaxFilter(3))
-    edge_v = np.asarray(edges.resize((cols, rows), Image.LANCZOS)).astype(float) / 255
-    keep = np.asarray(mask.resize((cols, rows), Image.BILINEAR)).astype(float) / 255
-
-    v = np.clip(tone ** gamma - edge * edge_v, 0, 1)
-    idx = ((1 - v) * (len(RAMP) - 1) + .5).astype(int)
-    idx[keep < 0.5] = 0
-    return ["".join(RAMP[i] for i in row).rstrip() for row in idx]
+def person_mask(photo):
+    with tempfile.TemporaryDirectory() as tmp:
+        src, out = Path(tmp) / "photo.png", Path(tmp) / "mask.png"
+        photo.save(src)
+        subprocess.run(["swift", str(SEGMENT), str(src), str(out)], check=True)
+        return Image.open(out).convert("L").resize(photo.size)
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("photo")
-    ap.add_argument("--box", default="250,60,820,760")
-    ap.add_argument("--cols", type=int, default=46)
+    ap.add_argument("--box", help="x0,y0,x1,y1 in the photo's pixels")
     a = ap.parse_args()
-    lines = portrait(a.photo, tuple(int(v) for v in a.box.split(",")), a.cols)
-    OUT.write_text("\n".join(lines) + "\n")
-    print(f"  {OUT.name}  {len(lines)} rows x {max(map(len, lines))} cols")
+    photo = ImageOps.exif_transpose(Image.open(a.photo)).convert("RGB")
+    if a.box:
+        box = tuple(int(v) for v in a.box.split(","))
+    else:
+        sx, sy = photo.width / 1500, photo.height / 2000
+        box = (round(BOX[0] * sx), round(BOX[1] * sy), round(BOX[2] * sx), round(BOX[3] * sy))
+    grid = brightness(photo, person_mask(photo), box, COLS, ROWS)
+    OUT.write_text(json.dumps({"rows": ROWS, "cols": COLS, "grid": grid}) + "\n")
+    print(f"  {OUT.name}  {ROWS} rows x {COLS} cols")
 
 
 if __name__ == "__main__":

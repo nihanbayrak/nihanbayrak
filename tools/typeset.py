@@ -15,21 +15,19 @@ from fontTools.varLib import instancer
 FONTS = Path(__file__).parent / "fonts"
 
 FACES = {
-    "display": ("CormorantInfant.ttf", 300),   # Cormorant Infant Light — the character
-    "display_med": ("CormorantInfant.ttf", 500),
-    "fact": ("ArchivoNarrow.ttf", 500),        # Archivo Narrow — small-caps metadata
-    "fact_bold": ("ArchivoNarrow.ttf", 700),
-    "mono": ("JetBrainsMono.ttf", 400),
-    "mono_bold": ("JetBrainsMono.ttf", 700),
-    "mono_light": ("JetBrainsMono.ttf", 200),
+    "mono": ("JetBrainsMono.ttf", {"wght": 400}),
+    "mono_bold": ("JetBrainsMono.ttf", {"wght": 700}),
+    "mono_light": ("JetBrainsMono.ttf", {"wght": 200}),
+    # Fraunces italic Light at the optical size it is set at — the typed mottos
+    "voice": ("Fraunces-Italic.ttf", {"wght": 300, "opsz": 19}),
 }
 
 
 @lru_cache(maxsize=None)
 def _load(face):
-    filename, weight = FACES[face]
+    filename, axes = FACES[face]
     path = FONTS / filename
-    tt = instancer.instantiateVariableFont(TTFont(path), {"wght": weight}, inplace=False)
+    tt = instancer.instantiateVariableFont(TTFont(path), axes, inplace=False)
 
     # Harfbuzz needs the instanced bytes, not the original file.
     from io import BytesIO
@@ -67,6 +65,31 @@ def measure(text, face, size, tracking=0.0):
     _, width = shape(text, face, tracking)
     _, _, _, upem = _load(face)
     return width * size / upem
+
+
+def advances(text, face, size):
+    """Right edge in px of each character of `text`, one entry per character.
+
+    A character inside a ligature or cluster shares the right edge of the glyph that
+    covers it, so a reveal stepped to these edges never shows part of a glyph.
+    """
+    _, _, hbfont, upem = _load(face)
+    buf = hb.Buffer()
+    buf.add_str(text)
+    buf.guess_segment_properties()
+    hb.shape(hbfont, buf, {"kern": True, "liga": True})
+
+    ends, cursor = {}, 0.0
+    for info, pos in zip(buf.glyph_infos, buf.glyph_positions):
+        cursor += pos.x_advance
+        ends[info.cluster] = cursor
+    starts = sorted(ends)
+    out, k = [], 0
+    for i in range(len(text)):
+        while k + 1 < len(starts) and starts[k + 1] <= i:
+            k += 1
+        out.append(ends[starts[k]] * size / upem)
+    return out
 
 
 def path_data(text, face, tracking=0.0):

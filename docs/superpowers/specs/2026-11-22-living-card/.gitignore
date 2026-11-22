@@ -1,0 +1,6 @@
+# mockup.py writes her photo and its mask here when run. They never enter the repo.
+photo.png
+mask.png
+*.jpg
+*.jpeg
+*.standalone.html
