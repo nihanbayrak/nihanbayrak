@@ -16,8 +16,8 @@ PHOTO = Path("/private/tmp/claude-501/-Users-nihanbayrak-claude-workspace/1673e4
 
 class Grid(unittest.TestCase):
     def test_reference_grid_is_the_portrait(self):
-        ref = json.load(open(REFERENCE))
-        data = json.load(open("data/portrait.json"))
+        ref = json.loads(Path(REFERENCE).read_text())
+        data = json.loads(Path("data/portrait.json").read_text())
         self.assertEqual((data["rows"], data["cols"]), (42, 66))
         self.assertEqual(data["grid"], ref["grid"])
 
@@ -38,7 +38,7 @@ class Grid(unittest.TestCase):
             subprocess.run(["swift", "tools/segment.swift", str(src), str(out)], check=True, capture_output=True)
             mask = Image.open(out).convert("L").resize(photo.size)
         g = portrait.brightness(photo, mask, (300, 120, 1150, 970), cols=66, rows=42)
-        ref = json.load(open(REFERENCE))["grid"]
+        ref = json.loads(Path(REFERENCE).read_text())["grid"]
         # The reference was made with Pillow 10.4 and matches it exactly; Pillow 12's
         # resampling moves a handful of cells by up to 0.03. Same face, a sign or two apart.
         diffs = [abs(a - b) for ra, rb in zip(g, ref) for a, b in zip(ra, rb)]
