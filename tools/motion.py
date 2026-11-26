@@ -19,8 +19,8 @@ import re
 RAMP = " .,:;i1tfLCG08@"
 N_FRAMES = 8
 FLIP_S = 1.6
-CYCLE_S = 18
-TYPE_END, HOLD_END, ERASE_END = 12, 28, 32     # percent of the motto loop
+MOTTO_S = 6                                   # one motto's turn: type, hold, erase
+TYPE_END, HOLD_END, ERASE_END = 36, 84, 96     # percent of one motto's turn
 
 
 def _pct(x):
@@ -63,35 +63,42 @@ def flip_css(prefix):
     return "".join(css)
 
 
-def type_css(prefix, j, edges, width, x=0):
+def type_css(prefix, j, edges, width, x=0, count=1):
     """Keyframes and class {prefix}v{j} for motto j's mask rect.
 
     `edges` are the mask's right edge after 0, 1, … n letters (edges[0] == 0); `width` is
     the rect's width and `x` its left edge, in user units. Type to TYPE_END, hold to
-    HOLD_END, erase by ERASE_END, then hide.
+    HOLD_END, erase by ERASE_END, then hide. `count` mottos take turns, MOTTO_S seconds
+    each, so the loop is count * MOTTO_S long and motto j starts j turns in.
 
     The rect scales from its own left edge, written in user units: that needs no
     transform-box, which not every engine honours. At rest — where animation does not
     run — motto 0 shows in full and the others stay hidden.
     """
     n = len(edges) - 1
-    steps = [(TYPE_END * i / n, edges[i]) for i in range(n + 1)]
-    steps += [(HOLD_END + (ERASE_END - HOLD_END) * (n - i) / n, edges[i]) for i in range(n, -1, -1)]
+    share = 1 / count                           # this motto's slice of the whole loop
+    type_end, hold_end, erase_end = (v * share for v in (TYPE_END, HOLD_END, ERASE_END))
+    steps = [(type_end * i / n, edges[i]) for i in range(n + 1)]
+    steps += [(hold_end + (erase_end - hold_end) * (n - i) / n, edges[i]) for i in range(n, -1, -1)]
     kf = "".join(f"{_pct(t)}{{transform:scaleX({e / width:.4f})}}" for t, e in steps)
     kf += "100%{transform:scaleX(0)}"
-    delay = -CYCLE_S + j * CYCLE_S // 3
+    cycle = count * MOTTO_S
+    delay = -cycle + j * MOTTO_S
     return (f"@keyframes {prefix}v{j}{{{kf}}}"
             f".{prefix}v{j}{{transform-origin:{x:g}px 0;transform:scaleX({1 if j == 0 else 0});"
-            f"animation:{prefix}v{j} {CYCLE_S}s step-end {delay}s infinite}}")
+            f"animation:{prefix}v{j} {cycle}s step-end {delay}s infinite}}")
 
 
-def still_css(prefix):
+def still_css(prefix, count=1):
     """Under reduced motion: frame 0 and motto 0, complete and still."""
     hide = ",".join(f".{prefix}f{k}" for k in range(1, N_FRAMES))
+    voices = ",".join(f".{prefix}v{j}" for j in range(count))
+    later = ",".join(f".{prefix}v{j}" for j in range(1, count))
     return ("@media (prefers-reduced-motion: reduce){"
-            f".{prefix}f0,{hide},.{prefix}v0,.{prefix}v1,.{prefix}v2{{animation:none}}"
+            f".{prefix}f0,{hide},{voices}{{animation:none}}"
             f".{prefix}f0{{opacity:1}}{hide}{{opacity:0}}"
-            f".{prefix}v0{{transform:scaleX(1)}}.{prefix}v1,.{prefix}v2{{transform:scaleX(0)}}}}")
+            f".{prefix}v0{{transform:scaleX(1)}}"
+            + (f"{later}{{transform:scaleX(0)}}" if later else "") + "}")
 
 
 # ---------------------------------------------------------------- reading it back

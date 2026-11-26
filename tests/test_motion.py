@@ -46,7 +46,7 @@ class Flipbook(unittest.TestCase):
 class Typing(unittest.TestCase):
     def test_typing_steps_land_on_letter_edges(self):
         edges, width = edges_for(MOTTOS[0])
-        css = motion.type_css("c", 0, edges, width)
+        css = motion.type_css("c", 0, edges, width, count=3)
         # scales are written to 4 decimals, so an edge lands within ~0.015 px of a letter's
         seen = sorted({motion.mask_scale(css, 0, p / 10000) * width for p in range(0, 1201)})
         self.assertEqual(len(seen), len(edges))
@@ -56,7 +56,7 @@ class Typing(unittest.TestCase):
         self.assertEqual(motion.mask_scale(css, 0, 0.50), 0.0)
 
     def test_one_motto_at_a_time(self):
-        css = "".join(motion.type_css("c", j, *edges_for(m)) for j, m in enumerate(MOTTOS))
+        css = "".join(motion.type_css("c", j, *edges_for(m), count=3) for j, m in enumerate(MOTTOS))
         for step in range(1800):
             t = step / 100                                   # seconds into the 18 s loop
             on = [j for j in range(3)
@@ -64,7 +64,7 @@ class Typing(unittest.TestCase):
             self.assertLessEqual(len(on), 1, (t, on))
 
     def test_each_motto_gets_its_turn(self):
-        css = "".join(motion.type_css("c", j, *edges_for(m)) for j, m in enumerate(MOTTOS))
+        css = "".join(motion.type_css("c", j, *edges_for(m), count=3) for j, m in enumerate(MOTTOS))
         for j in range(3):
             t = 6 * j + 3.6                                  # 20% into line j's own loop
             edges, width = edges_for(MOTTOS[j])
@@ -72,7 +72,7 @@ class Typing(unittest.TestCase):
 
     def test_delays_stagger_by_six_seconds(self):
         for j in range(3):
-            self.assertIn(f"{-18 + 6 * j}s infinite", motion.type_css("c", j, *edges_for(MOTTOS[j])))
+            self.assertIn(f"{-18 + 6 * j}s infinite", motion.type_css("c", j, *edges_for(MOTTOS[j]), count=3))
 
 
 def base_rule(css, cls):
@@ -87,7 +87,7 @@ class AnyEngine(unittest.TestCase):
     def test_mask_pivots_on_its_own_left_edge_without_fill_box(self):
         # Review finding: transform-origin "left" only meant the rect's edge because of
         # transform-box:fill-box. In user units the pivot is right in every engine.
-        css = motion.type_css("c", 0, *edges_for(MOTTOS[0]), x=384)
+        css = motion.type_css("c", 0, *edges_for(MOTTOS[0]), x=384, count=3)
         self.assertNotIn("transform-box", css)
         self.assertIn("transform-origin:384px 0", base_rule(css, "cv0"))
 
@@ -95,7 +95,7 @@ class AnyEngine(unittest.TestCase):
         # Review finding: a renderer that applies CSS but not animation stacked all 8
         # frames into a smear. At rest: frame 0 and motto 0, nothing else.
         css = motion.flip_css("c") + "".join(
-            motion.type_css("c", j, *edges_for(m), x=384) for j, m in enumerate(MOTTOS))
+            motion.type_css("c", j, *edges_for(m), x=384, count=3) for j, m in enumerate(MOTTOS))
         self.assertNotIn("opacity:0", base_rule(css, "cf0"))
         for k in range(1, 8):
             self.assertIn("opacity:0", base_rule(css, f"cf{k}"), k)
@@ -104,9 +104,27 @@ class AnyEngine(unittest.TestCase):
             self.assertIn("scaleX(0)", base_rule(css, f"cv{j}"), j)
 
 
+class OneMotto(unittest.TestCase):
+    def test_single_motto_is_up_most_of_its_loop(self):
+        # One motto (Nihan, 26 Nov): it types, holds and erases on a 6 s loop, never
+        # leaving the line blank for two thirds of the time the way a 3-turn loop would.
+        edges, width = edges_for(MOTTOS[0])
+        css = motion.type_css("c", 0, edges, width, count=1)
+        self.assertIn(f"animation:cv0 {motion.MOTTO_S}s step-end {-motion.MOTTO_S}s infinite", css)
+        full = sum(motion.mask_scale(css, 0, p / 1000) * width >= edges[-1] - 0.05 for p in range(1000))
+        blank = sum(motion.mask_scale(css, 0, p / 1000) == 0 for p in range(1000))
+        self.assertGreater(full, 450)
+        self.assertLess(blank, 60)
+
+    def test_still_css_for_one_motto(self):
+        css = motion.still_css("c", 1)
+        self.assertIn(".cv0{transform:scaleX(1)}", css)
+        self.assertNotIn(".cv1", css)
+
+
 class Still(unittest.TestCase):
     def test_still_css_shows_frame_0_and_line_0(self):
-        css = motion.still_css("c")
+        css = motion.still_css("c", 3)
         self.assertIn("prefers-reduced-motion: reduce", css)
         self.assertIn(".cf0", css)
         self.assertIn(".cv0", css)

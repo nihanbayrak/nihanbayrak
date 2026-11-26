@@ -13,7 +13,8 @@ DAY = date(2026, 11, 22)
 
 class Readout(unittest.TestCase):
     def test_readout_copy(self):
-        # Nihan's own list, 22 Nov, plus the two live lines she chose to keep.
+        # Nihan's own list, 22 Nov. GitHub numbers dropped 26 Nov: most of her work is on
+        # her work account, which the README says under the card.
         self.assertEqual(neofetch.readout(STATS, DAY), [
             ("title", "nihan@bayrak"),
             ("section", "Profile"),
@@ -38,9 +39,6 @@ class Readout(unittest.TestCase):
             ("section", "Contact"),
             ("pair", "linkedIn", "nihan-bayrak"),
             ("pair", "website", "consciouseyes.app"),
-            ("blank",),
-            ("section", "GitHub"),
-            ("pair", "commits", "441 · repos 17 · followers 28"),
         ])
 
     def test_pairs_line_up_as_approved(self):
@@ -69,8 +67,9 @@ class Card(unittest.TestCase):
             self.assertLess(len(svg.encode()), 1_000_000)
             for k in range(8):
                 self.assertIn(f'class="{p}f{k}"', svg)
-            for j in range(3):
+            for j in range(len(neofetch.MOTTOS)):
                 self.assertIn(f'class="{p}v{j}"', svg)
+            self.assertNotIn(f'class="{p}v{len(neofetch.MOTTOS)}"', svg)
             self.assertIn("prefers-reduced-motion", svg)
             self.assertIn("#0B3B2E", svg)
             for banned in ("WIN", "Creating Images", "spy", "FR"):

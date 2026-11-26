@@ -2,8 +2,7 @@
 
 Left, the portrait from data/portrait.json (tools/portrait.py), re-inked as an eight-frame
 flipbook. Right, key and value pairs joined by leader dots, the way a terminal system-info
-tool prints a machine, with the GitHub numbers from data/stats.json (tools/stats.py) at
-the foot. Under it, three mottos type themselves out in turn. Uptime counts from the day
+tool prints a machine. Under it, the motto types itself out, holds and erases, on a loop. Uptime counts from the day
 the GitHub account opened. Every animation rule lives in tools/motion.py.
 
 One deep green, painted by the card itself, so it is the same on GitHub's light and dark
@@ -35,8 +34,6 @@ VOICE_SIZE = 19
 ALT = "Nihan Bayrak as a moving terminal readout: her portrait drawn in signs beside her details. Berlin."
 MOTTOS = [
     "Engineering with an editor's eye.",
-    "I speak Python, fashion and three human languages.",
-    "Where the model meets the moodboard.",
 ]
 
 
@@ -56,7 +53,7 @@ def uptime(since, today):
 
 def readout(stats, today):
     """Lines of the readout. A pair is ('pair', key, value). Her words, her keys; keep them.
-    uptime and the GitHub line are the two live lines the nightly redraw updates."""
+    uptime is the one live line the nightly redraw updates."""
     return [
         ("title", "nihan@bayrak"),
         ("section", "Profile"),
@@ -81,9 +78,6 @@ def readout(stats, today):
         ("section", "Contact"),
         ("pair", "linkedIn", "nihan-bayrak"),
         ("pair", "website", "consciouseyes.app"),
-        ("blank",),
-        ("section", "GitHub"),
-        ("pair", "commits", f'{stats["commits"]:,} · repos {stats["repos"]} · followers {stats["followers"]}'),
     ]
 
 
@@ -169,7 +163,7 @@ def mottos(x, y, size, p):
         defs.append(f'<mask id="{p}m{j}"><rect class="{p}v{j}" x="{x}" y="{y - size:.1f}" '
                     f'width="{width:.2f}" height="{size * 1.5:.1f}" fill="#fff"/></mask>')
         body.append(f'<g mask="url(#{p}m{j})">{typeset.text(text, "voice", size, x, y, PALE)}</g>')
-        css.append(motion.type_css(p, j, edges, width, x))
+        css.append(motion.type_css(p, j, edges, width, x, len(MOTTOS)))
     return "".join(defs), "".join(body), "".join(css)
 
 
@@ -203,7 +197,7 @@ def build(stacked, today=None):
     size, lead = (info_size, info_lead) if stacked else (INFO_SIZE, INFO_LEAD)
     lines = "".join(m.line(info_x, info_y + r * lead, size, runs) for r, runs in enumerate(info) if runs)
     mask_defs, voice, voice_css = mottos(voice_x, voice_y, voice_size, p)
-    style = motion.flip_css(p) + voice_css + motion.still_css(p)
+    style = motion.flip_css(p) + voice_css + motion.still_css(p, len(MOTTOS))
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
             f'role="img" aria-label="{ALT}"><title>nihan@bayrak</title>'
             f'<style>{style}</style>'
