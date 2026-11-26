@@ -2,8 +2,7 @@
 
 Left, the portrait from data/portrait.json (tools/portrait.py), re-inked as an eight-frame
 flipbook. Right, key and value pairs joined by leader dots, the way a terminal system-info
-tool prints a machine, with the GitHub numbers from data/stats.json (tools/stats.py) at
-the foot. Under it, three mottos type themselves out in turn. Uptime counts from the day
+tool prints a machine. Under it, three mottos type themselves out in turn. Uptime counts from the day
 the GitHub account opened. Every animation rule lives in tools/motion.py.
 
 One deep green, painted by the card itself, so it is the same on GitHub's light and dark
@@ -56,7 +55,7 @@ def uptime(since, today):
 
 def readout(stats, today):
     """Lines of the readout. A pair is ('pair', key, value). Her words, her keys; keep them.
-    uptime and the GitHub line are the two live lines the nightly redraw updates."""
+    uptime is the one live line the nightly redraw updates."""
     return [
         ("title", "nihan@bayrak"),
         ("section", "Profile"),
@@ -81,9 +80,6 @@ def readout(stats, today):
         ("section", "Contact"),
         ("pair", "linkedIn", "nihan-bayrak"),
         ("pair", "website", "consciouseyes.app"),
-        ("blank",),
-        ("section", "GitHub"),
-        ("pair", "commits", f'{stats["commits"]:,} · repos {stats["repos"]} · followers {stats["followers"]}'),
     ]
 
 
